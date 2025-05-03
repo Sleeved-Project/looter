@@ -1,0 +1,24 @@
+{
+  "name": "looter",
+  "version": "1.0.0",
+  "description": "Projet de traitement batch développé avec **Spring Boot 3.4.5**, **Java 17**, et **MySQL** comme base de données.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sleeved-Project/looter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sleeved-Project/looter/issues"
+  },
+  "homepage": "https://github.com/Sleeved-Project/looter#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

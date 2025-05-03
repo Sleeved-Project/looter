@@ -96,6 +96,30 @@ java -jar target/looter-0.0.1-SNAPSHOT.jar --spring.batch.job.name=nomDuJob para
 
 ---
 
+## 💎 Qualité du code
+
+Ce projet utilise Husky pour les hooks Git et Checkstyle pour le linting Java.
+
+Mise en place automatique
+
+- Installez les dépendances NPM si ce n'est pas encore fait :
+
+```bash
+npm install
+```
+
+💡Avant chaque commit, les fichiers modifiés seront vérifiés via checkstyle grace au fichier `.husky/pre-commit`
+
+Lancer manuellement Checkstyle
+
+```bash
+mvn checkstyle:check
+```
+
+💡Les règles sont définies dans `resources/checkstyle.xml`. Vous pouvez les adapter selon vos standards d'équipe.
+
+---
+
 ## 🧪 Lancer les tests
 
 ```bash
