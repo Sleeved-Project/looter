@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: looter
+  datasource:
+    url: jdbc:mysql://localhost:3306/sleeved_db
+    username: root
+    password: SMack9911!DOwn++
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  batch:
+    jdbc:
+      initialize-schema: never
