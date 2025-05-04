@@ -47,7 +47,7 @@ Le fichier src/main/resources/application.yml contient :
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/sleeved_db
+    url: jdbc:mysql://localhost:3306/looter_scrap_db
     username: root
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver

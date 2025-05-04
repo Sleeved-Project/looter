@@ -2,7 +2,7 @@ spring:
   application:
     name: looter
   datasource:
-    url: jdbc:mysql://localhost:3306/sleeved_db
+    url: jdbc:mysql://localhost:3306/looter_scrap_db
     username: root
     password: SMack9911!DOwn++
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,7 +12,7 @@ spring:
     show-sql: true
   batch:
     jdbc:
-      initialize-schema: always
+      initialize-schema: never
 
 logging:
   level:
@@ -22,3 +22,10 @@ logging:
 looter:
   batch:
     chunksize: 10
+
+atlas:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sleeve_db
+    username: root
+    password: SMack9911!DOwn++
+    driver-class-name: com.mysql.cj.jdbc.Driver
