@@ -1,0 +1,21 @@
+package com.sleeved.looter.common.exception;
+
+import org.springframework.stereotype.Service;
+
+import com.sleeved.looter.common.util.Constantes;
+
+@Service
+public class LooterScrapingErrorHandler {
+  public void handle(Exception e, String context, String action, String item) {
+    String message = formatErrorMessage(context, action, item);
+    throw new LooterScrapingException(message, e);
+  }
+
+  public String formatErrorMessage(String context, String action, String item) {
+    return String.format(
+        Constantes.ERROR_MESSAGE_FORMAT,
+        context,
+        action,
+        item);
+  }
+}
