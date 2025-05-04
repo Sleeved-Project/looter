@@ -1,7 +1,8 @@
-package com.sleeved.looter.common.exception;
+package com.sleeved.looter.infra.service;
 
 import org.springframework.stereotype.Service;
 
+import com.sleeved.looter.common.exception.LooterScrapingException;
 import com.sleeved.looter.common.util.Constantes;
 
 @Service
