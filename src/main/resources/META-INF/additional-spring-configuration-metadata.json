@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "looter.batch.chunksize",
+      "type": "java.lang.String",
+      "description": "A description for 'looter.batch.chunksize'"
+    }
+  ]
+}

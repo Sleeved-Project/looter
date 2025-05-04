@@ -12,4 +12,13 @@ spring:
     show-sql: true
   batch:
     jdbc:
-      initialize-schema: never
+      initialize-schema: always
+
+logging:
+  level:
+    com:
+      looter: DEBUG
+
+looter:
+  batch:
+    chunksize: 10
