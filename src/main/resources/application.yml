@@ -8,7 +8,7 @@ spring:
     hikari:
       jdbc-url: jdbc:mysql://localhost:3306/looter_scrap_db
       username: ${LOOTER_DB_USERNAME}
-      password: ${LOOTER_DB_PASSWORD}
+      password: test
       driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:

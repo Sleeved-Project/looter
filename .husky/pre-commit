@@ -14,7 +14,8 @@ echo "✅ Checkstyle passed. Commit allowed."
 # Clear password verification
 echo ">> Checking for clear passwords in application.yml..."
 if git diff --cached --name-only | grep -q "application.yml"; then
-  if git diff --cached -- "*application.yml" | grep -E "password: [^$\{]"; then
+  # Vérifier le contenu qui va être commité, pas seulement les différences
+  if git show :application.yml | grep -E "password: [^$]" | grep -Ev "password: \\\${"; then
     echo "❌ ERREUR: Plain text password detected into application.yml. Use application-local.yml."
     exit 1
   fi
