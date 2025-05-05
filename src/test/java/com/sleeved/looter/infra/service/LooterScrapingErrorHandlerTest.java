@@ -1,12 +1,13 @@
 package com.sleeved.looter.infra.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.sleeved.looter.common.exception.LooterScrapingException;
 import com.sleeved.looter.common.util.Constantes;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LooterScrapingErrorHandlerTest {
 
@@ -29,12 +30,11 @@ class LooterScrapingErrorHandlerTest {
 
     // Verify that the result matches the expected format
     String expected = String.format(Constantes.ERROR_MESSAGE_FORMAT, context, action, item);
-    assertEquals(expected, result, "Formatted error message does not match expected format");
-
-    // Verify that the message contains the expected elements
-    assertTrue(result.contains(context), "Message should contain the context");
-    assertTrue(result.contains(action), "Message should contain the action");
-    assertTrue(result.contains(item), "Message should contain the item");
+    // Avec AssertJ:
+    assertThat(result)
+        .as("Formatted error message")
+        .isEqualTo(expected)
+        .contains(context, action, item);
   }
 
   @Test
@@ -45,16 +45,16 @@ class LooterScrapingErrorHandlerTest {
     String item = "Person(firstName=John, lastName=Doe, age=30)";
     Exception originalException = new RuntimeException("Test exception");
 
-    // Verify that the method throws the expected exception
-    LooterScrapingException exception = assertThrows(LooterScrapingException.class, () -> {
-      errorHandler.handle(originalException, context, action, item);
-    }, "The handle method should throw a LooterScrapingException");
-
-    // Verify the content of the exception
+    // Préparation du message attendu
     String expectedMessage = errorHandler.formatErrorMessage(context, action, item);
-    assertEquals(expectedMessage, exception.getMessage(), "Exception message does not match expected format");
 
-    // Verify that the original exception is preserved as the cause
-    assertEquals(originalException, exception.getCause(), "Original exception should be preserved as the cause");
+    // Verify that the method throws the expected exception with AssertJ
+    assertThatThrownBy(() -> {
+      errorHandler.handle(originalException, context, action, item);
+    })
+        .as("The handle method should throw a LooterScrapingException")
+        .isInstanceOf(LooterScrapingException.class)
+        .hasMessage(expectedMessage)
+        .hasCause(originalException);
   }
 }
