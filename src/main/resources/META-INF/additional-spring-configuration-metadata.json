@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "looter.batch.chunksize",
+      "type": "java.lang.String",
+      "description": "Chunk size used for batch processing in the Looter application"
+    },
+    {
+      "name": "atlas.datasource.url",
+      "type": "java.lang.String",
+      "description": "Connection URL for the Atlas database"
+    },
+    {
+      "name": "atlas.datasource.username",
+      "type": "java.lang.String",
+      "description": "Username for connecting to the Atlas database"
+    },
+    {
+      "name": "atlas.datasource.password",
+      "type": "java.lang.String",
+      "description": "Password for connecting to the Atlas database"
+    },
+    {
+      "name": "atlas.datasource.driver-class-name",
+      "type": "java.lang.String",
+      "description": "JDBC driver class name for connecting to the Atlas database"
+    }
+  ]
+}

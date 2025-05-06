@@ -1,0 +1,24 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo ">> Start Checkstyle..."
+mvn checkstyle:check
+
+if [ $? -ne 0 ]; then
+  echo "❌ Checkstyle violation detected. Commit canceled."
+  exit 1
+fi
+
+echo "✅ Checkstyle passed. Commit allowed."
+
+# Clear password verification
+echo ">> Checking for clear passwords in application.yml..."
+if git diff --cached --name-only | grep -q "application.yml"; then
+  if git diff --cached -- "*application.yml" | grep -E "password: [^$\{]"; then
+    echo "❌ ERREUR: Plain text password detected into application.yml. Use application-local.yml."
+    exit 1
+  fi
+fi
+
+echo "✅ No plain text passwords detected. Commit allowed."
+exit 0

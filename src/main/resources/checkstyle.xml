@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN" "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+  <module name="TreeWalker">
+
+    <!-- Nom de classe en PascalCase -->
+    <module name="TypeName" />
+
+    <!-- Nom de méthode en camelCase -->
+    <module name="MethodName" />
+
+    <!-- Nom de variable en camelCase -->
+    <module name="LocalVariableName" />
+
+    <!-- Import triés -->
+    <module name="CustomImportOrder">
+      <property name="sortImportsInGroupAlphabetically" value="true" />
+      <property name="customImportOrderRules"
+        value="STATIC###STANDARD_JAVA_PACKAGE###THIRD_PARTY_PACKAGE###SAME_PACKAGE(3)" />
+    </module>
+
+    <!-- Taille max d'une ligne -->
+    <module name="LineLength">
+      <property name="max" value="120" />
+    </module>
+
+    <!-- Uniquement une instruction par ligne -->
+    <module name="OneStatementPerLine" />
+
+    <!-- Espace entre les méthodes -->
+    <module name="EmptyLineSeparator" />
+
+    <!-- Espace après virgule -->
+    <module name="WhitespaceAfter" />
+
+    <!-- Pas de retour inutile -->
+    <module name="UnnecessaryReturn" />
+
+    <!-- Empêche les System.out.println -->
+    <module name="IllegalTokenText">
+      <property name="illegalTokens" value="System.out.println" />
+    </module>
+
+  </module>
+</module>

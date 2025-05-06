@@ -22,18 +22,19 @@ git clone https://github.com/ton-utilisateur/looter.git
 cd looter
 ```
 
-### 2. Importer la base de données
+### 2. Importer les bases de données
 
 Un fichier dump est disponible pour initialiser la base sleeved_db, y compris son schéma et des données de test.
 
-🔗 Télécharger le dump de la base
+🔗 Télécharger les dump des base
 
 - [sleeved_db_v1.sql](https://drive.google.com/file/d/1nXXpMkDlnbhaw-m4T0ovjEp1evoT20-0/view?usp=sharing)
+- [looter_scrap_db_v1.sql](https://drive.google.com/file/d/1HhoiVYRUHn_G675nqpZW4p_o5A1IpXDY/view?usp=drive_link)
 
-📥 Importer dans MySQL
+📥 Importer les base grace à cette commande
 
 ```bash
-mysql -u root -p < sleeved_db_v1.sql
+mysql -u root -p < databsename.sql
 ```
 
 💡 Assurez-vous que l’utilisateur MySQL dispose des droits nécessaires. Le dump contient déjà la commande CREATE DATABASE.
@@ -42,18 +43,29 @@ mysql -u root -p < sleeved_db_v1.sql
 
 ## ⚙️ Configuration de l'application
 
-Le fichier src/main/resources/application.yml contient :
+Le fichier `src/main/resources/application.yml` contient :
 
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/sleeved_db
-    username: root
-    password: password
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      jdbc-url: jdbc:mysql://localhost:3306/looter_scrap_db
+      username: ${LOOTER_DB_USERNAME}
+      password: ${LOOTER_DB_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
 ```
 
-💡 Assurez-vous de remplacer les identifiant de connexion à votre base de données.
+💡 Pour le développement local, créez un fichier `src/main/resources/application-local.yml` qui contiendra vos identifiants :
+
+```yaml
+spring:
+  datasource:
+    hikari:
+      username: root
+      password: password
+```
+
+⚠️ Assurez-vous de ne jamais commiter ce fichier sur Git. Il est déjà configuré dans le .gitignore.
 
 ---
 
@@ -72,37 +84,62 @@ Le JAR sera généré dans target/looter-0.0.1-SNAPSHOT.jar.
 Depuis une IDE
 
 - Ouvrir le projet dans votre IDE préféré.
+- Ajouter `-Dspring.profiles.active=local` dans les VM options de la configuration de lancement
 - Lancer la classe LooterApplication.java qui contient public static void main.
 
 Depuis le Spring Boot Dashboard
 
 - Ouvrez la vue Spring Boot Dashboard (menu View > Tool Windows > Spring Boot Dashboard).
 - Sélectionnez l’application looter dans la liste des projets Spring Boot.
-- Cliquez sur l’icône Run (▶️) ou Debug (🐞) à côté de l’entrée pour démarrer l’application.
-- Dans la section Jobs du dashboard, vous verrez la liste des jobs disponibles ; cliquez sur le nom d’un job pour le démarrer.
-- Pour relancer un job, cliquez à nouveau sur son nom ou utilisez les options de redémarrage fournies.
+- Accèder au menu contextuel en réalisant un clique droit sur le looter
+- Choisir (▶️)`Run with profile` ou (🐞)`Debug with profile` dans le menu contextuel
+- Choisir le profile `local`
 
-En ligne de commande
+Depuis la ligne de commande
 
 ```bash
-java -jar target/looter-0.0.1-SNAPSHOT.jar
+java -Dspring.profiles.active=local -jar target/looter-0.0.1-SNAPSHOT.jar
 ```
 
 💡 Pour lancer un job spécifique
 
 ```bash
-java -jar target/looter-0.0.1-SNAPSHOT.jar --spring.batch.job.name=nomDuJob param1=value1
+java -Dspring.profiles.active=local -jar target/looter-0.0.1-SNAPSHOT.jar --spring.batch.job.name=nomDuJob param1=value1
 ```
+
+---
+
+## 💎 Qualité du code
+
+Ce projet utilise Husky pour les hooks Git et Checkstyle pour le linting Java.
+
+Mise en place automatique
+
+- Installez les dépendances NPM si ce n'est pas encore fait :
+
+```bash
+npm install
+```
+
+💡Avant chaque commit, les fichiers modifiés seront vérifiés via checkstyle grace au fichier `.husky/pre-commit`
+
+Lancer manuellement Checkstyle
+
+```bash
+mvn checkstyle:check
+```
+
+💡Les règles sont définies dans `resources/checkstyle.xml`. Vous pouvez les adapter selon vos standards d'équipe.
 
 ---
 
 ## 🧪 Lancer les tests
 
 ```bash
-mvn test
+mvn clean test
 ```
 
-Les tests unitaires et d’intégration sont situés dans src/test.
+💡 Nous utilisons AsserJ pour les test, les tests unitaires et d’intégration sont situés dans `src/test`.
 
 ---
 
