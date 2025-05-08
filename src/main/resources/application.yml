@@ -7,8 +7,8 @@ spring:
   datasource:
     hikari:
       jdbc-url: jdbc:mysql://localhost:3306/looter_scrap_db
-      username: ${LOOTER_DB_USERNAME}
-      password: ${LOOTER_DB_PASSWORD}
+      username: ${LOOTER_SCRAP_DB_USERNAME}
+      password: ${LOOTER_SCRAP_DB_PASSWORD}
       driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -26,10 +26,29 @@ logging:
 looter:
   batch:
     chunksize: 10
+  staging:
+    datasource:
+      jdbc-url: jdbc:mysql://localhost:3306/looter_staging_db
+      username: ${LOOTER_STAGING_DB_USERNAME}
+      password: ${LOOTER_STAGING_DB_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
 
 atlas:
   datasource:
-    url: jdbc:mysql://localhost:3306/sleeve_db
-    username: ${ATLAS_DB_USERNAME}
-    password: ${ATLAS_DB_PASSWORD}
+    jdbc-url: jdbc:mysql://localhost:3306/sleeved_db
+    username: ${SLEEVED_DB_USERNAME}
+    password: ${SLEEVED_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+tcgplayer:
+  api:
+    key: ${TCGPLAYER_API_KEY}
+    url:
+      protocole: https
+      domain: api.pokemontcg.io
+      base: v2
+    endpoints:
+      cards:
+        paginate: cards?page=%d&pageSize=%d&orderBy=set.releaseDate
+        pagesize: 200
+        page: 1

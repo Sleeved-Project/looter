@@ -13,6 +13,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.sleeved.looter.batch.processor.PersonItemProcessor;
 import com.sleeved.looter.batch.reader.PersonItemReader;
+import com.sleeved.looter.batch.tasklet.FetchAndStageCardsTasklet;
 import com.sleeved.looter.batch.writer.PersonItemWriter;
 import com.sleeved.looter.domain.entity.Person;
 
@@ -22,10 +23,21 @@ public class BatchConfig {
   private Integer chunkSize;
 
   @Bean
-  public Job importPersonJob(JobRepository jobRepository, Step stepExemple) {
+  public Job importPersonJob(JobRepository jobRepository, Step fetchCardsStageStep, Step stepExemple) {
     return new JobBuilder("importPersonJob", jobRepository)
         .incrementer(new RunIdIncrementer())
-        .start(stepExemple)
+        .start(fetchCardsStageStep)
+        .next(stepExemple)
+        .build();
+  }
+
+  @Bean
+  public Step fetchCardsStageStep(
+      JobRepository jobRepository,
+      PlatformTransactionManager transactionManager,
+      FetchAndStageCardsTasklet fetchAndStageCardsTasklet) {
+    return new StepBuilder("fetchCardsStageStep", jobRepository)
+        .tasklet(fetchAndStageCardsTasklet, transactionManager)
         .build();
   }
 
