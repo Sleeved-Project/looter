@@ -30,6 +30,7 @@ Un fichier dump est disponible pour initialiser la base sleeved_db, y compris so
 
 - [sleeved_db_v1.sql](https://drive.google.com/file/d/1nXXpMkDlnbhaw-m4T0ovjEp1evoT20-0/view?usp=sharing)
 - [looter_scrap_db_v1.sql](https://drive.google.com/file/d/1HhoiVYRUHn_G675nqpZW4p_o5A1IpXDY/view?usp=drive_link)
+- [looter_staging_db_v1.sql](https://drive.google.com/file/d/1B19d7DsSOqzCbThkF1eNNbbTYKx-oHh9/view?usp=drive_link)
 
 📥 Importer les base grace à cette commande
 
@@ -177,3 +178,5 @@ com.sleeved.looter
 - [Spring Boot Documentation](https://docs.spring.io/spring-boot/)
 
 - [MySQL avec Spring](http://spring.io/guides/gs/accessing-data-mysql)
+
+- [Confluence looter](https://sleeved.atlassian.net/wiki/spaces/SleevedConception/folder/3735556?atlOrigin=eyJpIjoiODU2YzEwNDA3ZTQ0NDQxMWE4YTE1NzI3ZWJmZDY2NTQiLCJwIjoiYyJ9)
