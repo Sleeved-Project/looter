@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,25 +21,22 @@ public class TcgApiService {
 
   private final LooterScrapingErrorHandler looterScrapingErrorHandler;
   private final RestTemplate restTemplate;
+  private final TcgApiUrlBuilder tcgApiUrlBuilder;
+  private final TcgApiRequestFactory tcgApiRequestFactory;
 
-  @Value("${tcgplayer.api.url.protocole}")
-  private String apiProtocole;
-  @Value("${tcgplayer.api.url.domain}")
-  private String apiDomain;
-  @Value("${tcgplayer.api.url.base}")
-  private String apiBaseUrl;
   @Value("${tcgplayer.api.endpoints.cards.paginate}")
   private String apiCardPaginateEndpoint;
   @Value("${tcgplayer.api.endpoints.cards.pagesize}")
   private int apiCardPageSize;
   @Value("${tcgplayer.api.endpoints.cards.page}")
   private int apiCardPage;
-  @Value("${tcgplayer.api.key}")
-  private String apiKey;
 
-  public TcgApiService(RestTemplateBuilder builder, LooterScrapingErrorHandler looterScrapingErrorHandler) {
+  public TcgApiService(RestTemplateBuilder builder, LooterScrapingErrorHandler looterScrapingErrorHandler,
+      TcgApiUrlBuilder tcgApiUrlBuilder, TcgApiRequestFactory tcgApiRequestFactory) {
     this.restTemplate = builder.build();
     this.looterScrapingErrorHandler = looterScrapingErrorHandler;
+    this.tcgApiUrlBuilder = tcgApiUrlBuilder;
+    this.tcgApiRequestFactory = tcgApiRequestFactory;
   }
 
   public List<JsonNode> fetchAllCards() {
@@ -90,27 +85,10 @@ public class TcgApiService {
     return allCards;
   }
 
-  private String updateEndpointPaginationUrl(String endpoint, Integer pageSize, Integer page) {
-    return String.format(endpoint, page, pageSize);
-  }
-
-  private String getApiUrl(String tcgPlayerBaseUrl, String tcgPlayerEndpoint) {
-    String tcgPlayerUrl = String.format(Constantes.API_URL_FORMAT, apiProtocole, apiDomain);
-    return String.format(Constantes.TCG_API_URL_BASE_FORMAT, tcgPlayerUrl, tcgPlayerBaseUrl,
-        tcgPlayerEndpoint);
-  }
-
-  private HttpEntity<String> buildAuthorizedEntity() {
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", "Bearer " + apiKey);
-    return new HttpEntity<>(headers);
-  }
-
-  private JsonNode fetchCardPage(int page) {
-    String endpoint = updateEndpointPaginationUrl(apiCardPaginateEndpoint, apiCardPageSize, page);
-    String apiUrl = getApiUrl(apiBaseUrl, endpoint);
-    log.info("Fetching page {} from URL: {}", page, apiUrl);
-    ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET, buildAuthorizedEntity(),
+  protected JsonNode fetchCardPage(int page) {
+    String apiUrl = tcgApiUrlBuilder.buildPaginatedUrl(apiCardPaginateEndpoint, page, apiCardPageSize);
+    ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET,
+        tcgApiRequestFactory.createAuthorizedRequest(),
         JsonNode.class);
     return response.getBody();
   }
