@@ -20,29 +20,28 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TcgApiService {
+
+  private final LooterScrapingErrorHandler looterScrapingErrorHandler;
   private final RestTemplate restTemplate;
 
   @Value("${tcgplayer.api.url.protocole}")
   private String apiProtocole;
-
   @Value("${tcgplayer.api.url.domain}")
   private String apiDomain;
-
   @Value("${tcgplayer.api.url.base}")
   private String apiBaseUrl;
-
   @Value("${tcgplayer.api.endpoints.cards.paginate}")
   private String apiCardPaginateEndpoint;
   @Value("${tcgplayer.api.endpoints.cards.pagesize}")
   private int apiCardPageSize;
   @Value("${tcgplayer.api.endpoints.cards.page}")
   private int apiCardPage;
-
   @Value("${tcgplayer.api.key}")
   private String apiKey;
 
-  public TcgApiService(RestTemplateBuilder builder) {
+  public TcgApiService(RestTemplateBuilder builder, LooterScrapingErrorHandler looterScrapingErrorHandler) {
     this.restTemplate = builder.build();
+    this.looterScrapingErrorHandler = looterScrapingErrorHandler;
   }
 
   public List<JsonNode> fetchAllCards() {
@@ -50,62 +49,70 @@ public class TcgApiService {
     List<JsonNode> allCards = new ArrayList<>();
 
     while (true) {
-      HttpHeaders headers = new HttpHeaders();
-      headers.set("Authorization", "Bearer " + apiKey);
+      try {
 
-      String endpointPaginated = updateEndpointPaginationUrl(apiCardPaginateEndpoint, apiCardPageSize, page);
-      String apiUrl = getApiUrl(apiBaseUrl, endpointPaginated);
-      log.info("API URL: {}", apiUrl);
-      // 2. Envelopper les headers
-      HttpEntity<String> entity = new HttpEntity<>(headers);
+        JsonNode root = fetchCardPage(page);
+        if (root == null || !root.has("data") || !root.get("data").isArray()) {
+          throw new RuntimeException("No data found or invalid response");
+        }
 
-      // 3. Requête avec échange
-      ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, JsonNode.class);
+        JsonNode cards = root.get("data");
+        if (!cards.isArray() || cards.size() == 0) {
+          log.info("No more cards to fetch or invalid response format");
+          break;
+        }
 
-      JsonNode root = response.getBody();
-      log.info("API Response Done");
-      if (root == null) {
-        throw new RuntimeException("Failed to fetch data from TCGPlayer API");
-      }
+        for (JsonNode card : cards) {
+          allCards.add(card);
+        }
 
-      JsonNode cards = root.path("data");
+        // ! Real condition for production
+        // int total = root.path("totalCount").asInt();
+        // if (page * apiCardPageSize >= total) {
+        // log.info("All cards fetched");
+        // break;
+        // }
 
-      if (!cards.isArray() || cards.size() == 0) {
-        log.info("No more cards to fetch or invalid response format");
+        // ! Test condition for testing
+        if (page * apiCardPageSize >= apiCardPageSize * 2) {
+          log.info("All cards fetched");
+          break;
+        }
+
+        page++;
+      } catch (Exception e) {
+        looterScrapingErrorHandler.handle(e, Constantes.SERVICE_CONTEXT, Constantes.FETCH_DATA_ACTION,
+            Constantes.TCGAPI_CARD_PAGINATE_ITEM);
         break;
       }
-
-      for (JsonNode card : cards) {
-        allCards.add(card);
-      }
-
-      // ! Real condition for production
-      // int total = root.path("totalCount").asInt();
-      // if (page * apiCardPageSize >= total) {
-      // log.info("All cards fetched");
-      // break;
-      // }
-
-      // ! Test condition for testing
-      if (page * apiCardPageSize >= apiCardPageSize * 2) {
-        log.info("All cards fetched");
-        break;
-      }
-
-      page++;
     }
 
     return allCards;
   }
 
-  public String updateEndpointPaginationUrl(String endpoint, Integer pageSize, Integer page) {
+  private String updateEndpointPaginationUrl(String endpoint, Integer pageSize, Integer page) {
     return String.format(endpoint, page, pageSize);
   }
 
-  public String getApiUrl(String tcgPlayerBaseUrl, String tcgPlayerEndpoint) {
+  private String getApiUrl(String tcgPlayerBaseUrl, String tcgPlayerEndpoint) {
     String tcgPlayerUrl = String.format(Constantes.API_URL_FORMAT, apiProtocole, apiDomain);
     return String.format(Constantes.TCG_API_URL_BASE_FORMAT, tcgPlayerUrl, tcgPlayerBaseUrl,
         tcgPlayerEndpoint);
+  }
+
+  private HttpEntity<String> buildAuthorizedEntity() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Bearer " + apiKey);
+    return new HttpEntity<>(headers);
+  }
+
+  private JsonNode fetchCardPage(int page) {
+    String endpoint = updateEndpointPaginationUrl(apiCardPaginateEndpoint, apiCardPageSize, page);
+    String apiUrl = getApiUrl(apiBaseUrl, endpoint);
+    log.info("Fetching page {} from URL: {}", page, apiUrl);
+    ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET, buildAuthorizedEntity(),
+        JsonNode.class);
+    return response.getBody();
   }
 
 }

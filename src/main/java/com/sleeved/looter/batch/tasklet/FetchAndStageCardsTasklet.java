@@ -2,7 +2,6 @@ package com.sleeved.looter.batch.tasklet;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sleeved.looter.domain.entity.staging.StagingCard;
 import com.sleeved.looter.domain.repository.staging.StagingCardRepository;
+import com.sleeved.looter.infra.mapper.StagingCardMapper;
 import com.sleeved.looter.infra.service.TcgApiService;
 
 @Component
@@ -20,10 +20,13 @@ public class FetchAndStageCardsTasklet implements Tasklet {
 
   private final TcgApiService tcgApiService;
   private final StagingCardRepository stagingCardRepo;
+  private final StagingCardMapper stagingCardMapper;
 
-  public FetchAndStageCardsTasklet(TcgApiService tcgApiService, StagingCardRepository stagingCardRepo) {
+  public FetchAndStageCardsTasklet(TcgApiService tcgApiService, StagingCardRepository stagingCardRepo,
+      StagingCardMapper stagingCardMapper) {
     this.tcgApiService = tcgApiService;
     this.stagingCardRepo = stagingCardRepo;
+    this.stagingCardMapper = stagingCardMapper;
   }
 
   @Override
@@ -33,16 +36,7 @@ public class FetchAndStageCardsTasklet implements Tasklet {
 
     List<JsonNode> cards = tcgApiService.fetchAllCards();
 
-    List<StagingCard> entities = cards.stream()
-        .map(cardJson -> {
-          StagingCard entity = new StagingCard();
-          entity.setId(cardJson.path("id").asText());
-          entity.setPayload(cardJson.toString());
-          entity.setUpdatedAt(now);
-          entity.setBatchId(jobId);
-          return entity;
-        })
-        .collect(Collectors.toList());
+    List<StagingCard> entities = stagingCardMapper.toEntities(cards, jobId, now);
 
     stagingCardRepo.saveAll(entities);
 
