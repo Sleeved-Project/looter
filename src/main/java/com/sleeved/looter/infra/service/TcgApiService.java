@@ -69,7 +69,7 @@ public class TcgApiService {
         // }
 
         // ! Test condition for testing
-        if (page * apiCardPageSize >= apiCardPageSize * 2) {
+        if (page * apiCardPageSize >= apiCardPageSize * 20) {
           log.info("All cards fetched");
           break;
         }
@@ -87,9 +87,11 @@ public class TcgApiService {
 
   protected JsonNode fetchCardPage(int page) {
     String apiUrl = tcgApiUrlBuilder.buildPaginatedUrl(apiCardPaginateEndpoint, page, apiCardPageSize);
+    log.info("Fetching cards from TCG API: {}", apiUrl);
     ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET,
         tcgApiRequestFactory.createAuthorizedRequest(),
         JsonNode.class);
+    log.info("Response status code: {}", response.getStatusCode());
     return response.getBody();
   }
 

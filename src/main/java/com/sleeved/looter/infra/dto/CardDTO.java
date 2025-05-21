@@ -1,7 +1,6 @@
 package com.sleeved.looter.infra.dto;
 
 import java.util.List;
-import java.util.Map;
 
 import lombok.Data;
 
@@ -27,7 +26,7 @@ public class CardDTO {
   private String rarity;
   private String flavorText;
   private List<Integer> nationalPokedexNumbers;
-  private Map<String, String> legalities; // e.g. {"unlimited": "Legal"}
+  private LegalitiesDTO legalities;
   private ImageDTO images;
   private TcgPlayerDTO tcgplayer;
   private CardMarketDTO cardmarket;

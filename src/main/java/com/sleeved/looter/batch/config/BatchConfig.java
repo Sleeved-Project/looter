@@ -11,23 +11,37 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.sleeved.looter.batch.processor.CardDTOToBaseEntityCardProcessor;
 import com.sleeved.looter.batch.processor.PersonItemProcessor;
 import com.sleeved.looter.batch.reader.PersonItemReader;
+import com.sleeved.looter.batch.reader.StagingCardToCardDTOReader;
 import com.sleeved.looter.batch.tasklet.FetchAndStageCardsTasklet;
+import com.sleeved.looter.batch.writer.BaseEntityWriter;
 import com.sleeved.looter.batch.writer.PersonItemWriter;
 import com.sleeved.looter.domain.entity.Person;
+import com.sleeved.looter.infra.dto.BaseCardEntitiesProcessedDTO;
+import com.sleeved.looter.infra.dto.CardDTO;
 
 @Configuration
 public class BatchConfig {
   @Value("${looter.batch.chunksize:1}")
   private Integer chunkSize;
 
+  // @Bean
+  // public Job importScrapingJob(JobRepository jobRepository, Step
+  // fetchCardsStageStep, Step importBaseEntitiesStep) {
+  // return new JobBuilder("importPersonJob", jobRepository)
+  // .incrementer(new RunIdIncrementer())
+  // .start(fetchCardsStageStep)
+  // .next(importBaseEntitiesStep)
+  // .build();
+  // }
+
   @Bean
-  public Job importPersonJob(JobRepository jobRepository, Step fetchCardsStageStep, Step stepExemple) {
-    return new JobBuilder("importPersonJob", jobRepository)
+  public Job importScrapingJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep) {
+    return new JobBuilder("importScrapingJob", jobRepository)
         .incrementer(new RunIdIncrementer())
-        .start(fetchCardsStageStep)
-        .next(stepExemple)
+        .start(importBaseEntitiesStep)
         .build();
   }
 
@@ -38,6 +52,21 @@ public class BatchConfig {
       FetchAndStageCardsTasklet fetchAndStageCardsTasklet) {
     return new StepBuilder("fetchCardsStageStep", jobRepository)
         .tasklet(fetchAndStageCardsTasklet, transactionManager)
+        .build();
+  }
+
+  @Bean
+  public Step importBaseEntitiesStep(
+      JobRepository jobRepository,
+      PlatformTransactionManager transactionManager,
+      StagingCardToCardDTOReader reader,
+      CardDTOToBaseEntityCardProcessor processor,
+      BaseEntityWriter writer) {
+    return new StepBuilder("importBaseEntitiesStep", jobRepository)
+        .<CardDTO, BaseCardEntitiesProcessedDTO>chunk(chunkSize, transactionManager)
+        .reader(reader)
+        .processor(processor)
+        .writer(writer)
         .build();
   }
 
