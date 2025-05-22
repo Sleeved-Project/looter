@@ -10,6 +10,10 @@ import com.sleeved.looter.infra.dto.AbilityDTO;
 @Component
 public class AbilityMapper {
   public Ability toEntity(AbilityDTO abilityDTO) {
+    if (abilityDTO == null) {
+      return null;
+    }
+
     Ability ability = new Ability();
     ability.setName(abilityDTO.getName());
     ability.setText(abilityDTO.getText());
@@ -22,7 +26,8 @@ public class AbilityMapper {
       return List.of();
     }
     return AbilityDTOs.stream()
-        .map(abilityDTO -> this.toEntity(abilityDTO))
+        .map(this::toEntity)
+        .filter(ability -> ability != null)
         .toList();
   }
 }

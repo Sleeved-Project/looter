@@ -10,6 +10,9 @@ import com.sleeved.looter.infra.dto.AttackDTO;
 @Component
 public class AttackMapper {
   public Attack toEntity(AttackDTO attackDTO) {
+    if (attackDTO == null) {
+      return null;
+    }
     Attack attack = new Attack();
     attack.setName(attackDTO.getName());
     attack.setDamage(attackDTO.getDamage());
@@ -23,7 +26,8 @@ public class AttackMapper {
       return List.of();
     }
     return attackDTOs.stream()
-        .map(attackDTO -> this.toEntity(attackDTO))
+        .map(this::toEntity)
+        .filter(attack -> attack != null)
         .toList();
   }
 }

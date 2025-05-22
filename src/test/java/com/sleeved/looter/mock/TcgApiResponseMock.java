@@ -21,7 +21,7 @@ public class TcgApiResponseMock {
 
     rootNode.set("data", dataArray);
     rootNode.put("pageSize", numberOfCards);
-    rootNode.put("totalCount", 30); // Total fictif
+    rootNode.put("totalCount", 20); // Total fictif
 
     return rootNode;
   }
