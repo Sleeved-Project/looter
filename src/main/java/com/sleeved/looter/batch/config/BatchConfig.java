@@ -32,25 +32,25 @@ public class BatchConfig {
   @Autowired
   private ImportScrappingListener importScrappingListener;
 
+  @Bean
+  public Job importScrapingJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep) {
+    return new JobBuilder("importPersonJob", jobRepository)
+        .incrementer(new RunIdIncrementer())
+        .listener(importScrappingListener)
+        .start(fetchCardsStageStep)
+        .next(importBaseEntitiesStep)
+        .build();
+  }
+
   // @Bean
   // public Job importScrapingJob(JobRepository jobRepository, Step
   // fetchCardsStageStep, Step importBaseEntitiesStep) {
-  // return new JobBuilder("importPersonJob", jobRepository)
+  // return new JobBuilder("importScrapingJob", jobRepository)
   // .incrementer(new RunIdIncrementer())
   // .listener(importScrappingListener)
-  // .start(fetchCardsStageStep)
-  // .next(importBaseEntitiesStep)
+  // .start(importBaseEntitiesStep)
   // .build();
   // }
-
-  @Bean
-  public Job importScrapingJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep) {
-    return new JobBuilder("importScrapingJob", jobRepository)
-        .incrementer(new RunIdIncrementer())
-        .listener(importScrappingListener)
-        .start(importBaseEntitiesStep)
-        .build();
-  }
 
   @Bean
   public Step fetchCardsStageStep(
