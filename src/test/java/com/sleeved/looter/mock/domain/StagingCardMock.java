@@ -1,4 +1,4 @@
-package com.sleeved.looter.mock;
+package com.sleeved.looter.mock.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +31,20 @@ public class StagingCardMock {
     return card;
   }
 
+  public static StagingCard createMockStagingCard(String id, String name) {
+    StagingCard card = new StagingCard();
+    card.setId(id);
+    card.setPayload(name);
+    return card;
+  }
+
   public static List<StagingCard> createMockStagingCardsList(int count) {
     List<StagingCard> cards = new ArrayList<>();
 
     for (int i = 0; i < count; i++) {
-      StagingCard card = new StagingCard();
+      String id = "card-" + i;
+      String payload = "{\"id\":\"" + id + "\",\"name\":\"Test Card " + i + "\"}";
+      StagingCard card = createMockStagingCard(id, payload);
       cards.add(card);
     }
 

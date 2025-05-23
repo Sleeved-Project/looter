@@ -1,4 +1,4 @@
-package com.sleeved.looter.mock;
+package com.sleeved.looter.mock.infra;
 
 import java.util.ArrayList;
 import java.util.List;

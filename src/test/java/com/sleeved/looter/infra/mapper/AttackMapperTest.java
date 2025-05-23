@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sleeved.looter.domain.entity.atlas.Attack;
 import com.sleeved.looter.infra.dto.AttackDTO;
-import com.sleeved.looter.mock.AttackDTOMock;
+import com.sleeved.looter.mock.infra.AttackDTOMock;
 
 @ExtendWith(MockitoExtension.class)
 public class AttackMapperTest {

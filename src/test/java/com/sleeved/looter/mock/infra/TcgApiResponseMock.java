@@ -1,4 +1,4 @@
-package com.sleeved.looter.mock;
+package com.sleeved.looter.mock.infra;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

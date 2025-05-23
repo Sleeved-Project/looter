@@ -29,7 +29,7 @@ public class StagingCardToCardDTOReader implements ItemReader<CardDTO> {
     this.stagingCardRepository = stagingCardRepository;
     this.objectMapper = objectMapper;
 
-    List<StagingCard> cards = this.stagingCardRepository.findAll(); // ou une méthode spécifique si filtrée
+    List<StagingCard> cards = this.stagingCardRepository.findAll();
     log.info("READER - Found {} staging cards", cards.size());
     this.cardIterator = cards.iterator();
   }

@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sleeved.looter.domain.entity.atlas.Legalities;
 import com.sleeved.looter.infra.dto.LegalitiesDTO;
-import com.sleeved.looter.mock.LegalitiesDTOMock;
+import com.sleeved.looter.mock.infra.LegalitiesDTOMock;
 
 @ExtendWith(MockitoExtension.class)
 public class LegalitiesMapperTest {

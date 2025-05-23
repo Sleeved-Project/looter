@@ -5,7 +5,7 @@ import com.sleeved.looter.domain.entity.staging.StagingCard;
 import com.sleeved.looter.domain.repository.staging.StagingCardRepository;
 import com.sleeved.looter.infra.mapper.StagingCardMapper;
 import com.sleeved.looter.infra.service.TcgApiService;
-import com.sleeved.looter.mock.StagingCardMock;
+import com.sleeved.looter.mock.domain.StagingCardMock;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.sleeved.looter.mock;
+package com.sleeved.looter.mock.infra;
 
 import com.sleeved.looter.infra.dto.LegalitiesDTO;
 

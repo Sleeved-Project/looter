@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sleeved.looter.domain.entity.atlas.Ability;
 import com.sleeved.looter.infra.dto.AbilityDTO;
-import com.sleeved.looter.mock.AbilityDTOMock;
+import com.sleeved.looter.mock.infra.AbilityDTOMock;
 
 @ExtendWith(MockitoExtension.class)
 public class AbilityMapperTest {
