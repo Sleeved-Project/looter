@@ -19,7 +19,7 @@ class LooterScrapingErrorHandlerTest {
   }
 
   @Test
-  void testFormatErrorMessage() {
+  void formatErrorMessage_shouldReturnCorrectlyFormattedMessage() {
     // Test data
     String context = "PROCESSOR_CONTEXT";
     String action = "UPDATE_ACTION";
@@ -38,7 +38,7 @@ class LooterScrapingErrorHandlerTest {
   }
 
   @Test
-  void testHandle() {
+  void handle_shouldThrowLooterScrapingExceptionWithFormattedMessage() {
     // Test data
     String context = "PROCESSOR_CONTEXT";
     String action = "UPDATE_ACTION";

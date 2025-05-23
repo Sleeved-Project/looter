@@ -6,7 +6,27 @@
       "description": "Chunk size used for batch processing in the Looter application"
     },
     {
-      "name": "atlas.datasource.url",
+      "name": "looter.staging.datasource.jdbc-url",
+      "type": "java.lang.String",
+      "description": "Connection URL for the staging database"
+    },
+    {
+      "name": "looter.staging.datasource.username",
+      "type": "java.lang.String",
+      "description": "Username for connecting to the staging database"
+    },
+    {
+      "name": "looter.staging.datasource.password",
+      "type": "java.lang.String",
+      "description": "Password for connecting to the staging database"
+    },
+    {
+      "name": "looter.staging.datasource.driver-class-name",
+      "type": "java.lang.String",
+      "description": "JDBC driver class name for connecting to the staging database"
+    },
+    {
+      "name": "atlas.datasource.jdbc-url",
       "type": "java.lang.String",
       "description": "Connection URL for the Atlas database"
     },
@@ -24,6 +44,41 @@
       "name": "atlas.datasource.driver-class-name",
       "type": "java.lang.String",
       "description": "JDBC driver class name for connecting to the Atlas database"
+    },
+    {
+      "name": "tcgplayer.api.key",
+      "type": "java.lang.String",
+      "description": "API key for TCGPlayer authentication"
+    },
+    {
+      "name": "tcgplayer.api.url.protocole",
+      "type": "java.lang.String",
+      "description": "Protocol used for TCGPlayer API (http or https)"
+    },
+    {
+      "name": "tcgplayer.api.url.domain",
+      "type": "java.lang.String",
+      "description": "Domain name for TCGPlayer API"
+    },
+    {
+      "name": "tcgplayer.api.url.base",
+      "type": "java.lang.String",
+      "description": "Base path for TCGPlayer API version"
+    },
+    {
+      "name": "tcgplayer.api.endpoints.cards.paginate",
+      "type": "java.lang.String",
+      "description": "Pagination endpoint format for TCGPlayer cards API"
+    },
+    {
+      "name": "tcgplayer.api.endpoints.cards.pagesize",
+      "type": "java.lang.Integer",
+      "description": "Page size for TCGPlayer cards API"
+    },
+    {
+      "name": "tcgplayer.api.endpoints.cards.page",
+      "type": "java.lang.Integer",
+      "description": "Page number for TCGPlayer cards API"
     }
   ]
 }
