@@ -1,5 +1,8 @@
 package com.sleeved.looter.batch.writer;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -13,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.Chunk;
 
+import com.sleeved.looter.common.exception.LooterScrapingException;
 import com.sleeved.looter.domain.entity.atlas.Ability;
 import com.sleeved.looter.domain.entity.atlas.Artist;
 import com.sleeved.looter.domain.entity.atlas.Attack;
@@ -28,6 +32,7 @@ import com.sleeved.looter.domain.service.RarityService;
 import com.sleeved.looter.domain.service.SubtypeService;
 import com.sleeved.looter.domain.service.TypeService;
 import com.sleeved.looter.infra.dto.BaseCardEntitiesProcessedDTO;
+import com.sleeved.looter.infra.service.LooterScrapingErrorHandler;
 import com.sleeved.looter.mock.domain.AbilityMock;
 import com.sleeved.looter.mock.domain.ArtistMock;
 import com.sleeved.looter.mock.domain.AttackMock;
@@ -59,6 +64,9 @@ class BaseEntityWriterTest {
 
   @Mock
   private LegalitiesService legalityService;
+
+  @Mock
+  private LooterScrapingErrorHandler errorHandler;
 
   @InjectMocks
   private BaseEntityWriter writer;
@@ -159,5 +167,26 @@ class BaseEntityWriterTest {
     verify(attackService).getOrCreate(attacks1.get(0));
     verify(legalityService).getOrCreate(legalities1);
     verify(legalityService).getOrCreate(legalities2);
+  }
+
+  @Test
+  void write_shouldHandleExceptionWithErrorHandler() throws Exception {
+    BaseCardEntitiesProcessedDTO dto = new BaseCardEntitiesProcessedDTO();
+    Rarity rarity = RarityMock.createMockRarity("Rare");
+    dto.setRarity(rarity);
+
+    Exception serviceException = new RuntimeException("Service error");
+    when(rarityService.getOrCreate(any())).thenThrow(serviceException);
+
+    LooterScrapingException expectedException = new LooterScrapingException("Error processing entity",
+        serviceException);
+    doThrow(expectedException).when(errorHandler).handle(
+        any(Exception.class),
+        anyString(),
+        anyString(),
+        anyString());
+
+    assertThatThrownBy(() -> writer.write(new Chunk<>(List.of(dto))))
+        .isInstanceOf(LooterScrapingException.class);
   }
 }

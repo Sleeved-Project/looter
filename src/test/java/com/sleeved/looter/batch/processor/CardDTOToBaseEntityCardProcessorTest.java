@@ -1,7 +1,10 @@
 package com.sleeved.looter.batch.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -13,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.sleeved.looter.common.exception.LooterScrapingException;
 import com.sleeved.looter.domain.entity.atlas.Ability;
 import com.sleeved.looter.domain.entity.atlas.Artist;
 import com.sleeved.looter.domain.entity.atlas.Attack;
@@ -32,6 +36,7 @@ import com.sleeved.looter.infra.mapper.LegalitiesMapper;
 import com.sleeved.looter.infra.mapper.RarityMapper;
 import com.sleeved.looter.infra.mapper.SubtypeMapper;
 import com.sleeved.looter.infra.mapper.TypeMapper;
+import com.sleeved.looter.infra.service.LooterScrapingErrorHandler;
 import com.sleeved.looter.mock.domain.AbilityMock;
 import com.sleeved.looter.mock.domain.ArtistMock;
 import com.sleeved.looter.mock.domain.AttackMock;
@@ -64,6 +69,9 @@ class CardDTOToBaseEntityCardProcessorTest {
 
   @Mock
   private LegalitiesMapper legalitiesMapper;
+
+  @Mock
+  private LooterScrapingErrorHandler errorHandler;
 
   @InjectMocks
   private CardDTOToBaseEntityCardProcessor processor;
@@ -187,5 +195,24 @@ class CardDTOToBaseEntityCardProcessorTest {
     assertThat(result.getAbilities()).isEqualTo(mockAbilities);
     assertThat(result.getAttacks()).isEqualTo(mockAttacks);
     assertThat(result.getLegalities()).isEqualTo(mockLegalities);
+  }
+
+  @Test
+  void process_shouldHandleExceptionWithErrorHandler() {
+    CardDTO cardDTO = CardDTOMock.createMockCardDTO("test-card", "Test Card");
+    Exception mappingException = new RuntimeException("Mapping error");
+
+    when(rarityMapper.toEntity(any())).thenThrow(mappingException);
+
+    LooterScrapingException expectedException = new LooterScrapingException("Error processing card", mappingException);
+    doThrow(expectedException).when(errorHandler).handle(
+        any(Exception.class),
+        anyString(),
+        anyString(),
+        anyString());
+
+    assertThatThrownBy(() -> processor.process(cardDTO))
+        .isInstanceOf(LooterScrapingException.class)
+        .hasMessage("Error processing card");
   }
 }
