@@ -68,6 +68,19 @@ public class AttackMapperTest {
   }
 
   @Test
+  void toEntity_shouldHandleEmptyStringValues() {
+    AttackDTO dto = AttackDTOMock.createMockAttackDTO("Quick Attack", List.of("Colorless"), 1, "", "");
+
+    Attack result = mapper.toEntity(dto);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getName()).isEqualTo("Quick Attack");
+    assertThat(result.getDamage()).isNull(); // Vérifie que les chaînes vides sont converties en null
+    assertThat(result.getConvertedEnergyCost()).isEqualTo(1);
+    assertThat(result.getText()).isNull(); // Vérifie que les chaînes vides sont converties en null
+  }
+
+  @Test
   void toListEntity_shouldMapMultipleAttacks() {
     List<AttackDTO> dtos = AttackDTOMock.createMockAttackDTOsList(2);
 
