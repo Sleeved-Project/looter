@@ -27,7 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sleeved.looter.common.util.Constantes;
-import com.sleeved.looter.mock.TcgApiResponseMock;
+import com.sleeved.looter.mock.infra.TcgApiResponseMock;
 
 @ExtendWith(MockitoExtension.class)
 public class TcgApiServiceTest {

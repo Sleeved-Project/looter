@@ -1,4 +1,4 @@
-package com.sleeved.looter.mock;
+package com.sleeved.looter.mock.infra;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,7 @@ public class TcgApiResponseMock {
 
     rootNode.set("data", dataArray);
     rootNode.put("pageSize", numberOfCards);
-    rootNode.put("totalCount", 30); // Total fictif
+    rootNode.put("totalCount", 20); // Total fictif
 
     return rootNode;
   }

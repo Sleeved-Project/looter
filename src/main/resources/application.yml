@@ -13,7 +13,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
   batch:
     jdbc:
       initialize-schema: never
@@ -21,7 +21,8 @@ spring:
 logging:
   level:
     com:
-      looter: DEBUG
+      sleeved:
+        looter: INFO
 
 looter:
   batch:

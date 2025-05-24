@@ -10,36 +10,47 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.sleeved.looter.common.util.Constantes;
 import com.sleeved.looter.domain.entity.staging.StagingCard;
 import com.sleeved.looter.domain.repository.staging.StagingCardRepository;
 import com.sleeved.looter.infra.mapper.StagingCardMapper;
+import com.sleeved.looter.infra.service.LooterScrapingErrorHandler;
 import com.sleeved.looter.infra.service.TcgApiService;
 
 @Component
 public class FetchAndStageCardsTasklet implements Tasklet {
+
+  private final LooterScrapingErrorHandler looterScrapingErrorHandler;
 
   private final TcgApiService tcgApiService;
   private final StagingCardRepository stagingCardRepo;
   private final StagingCardMapper stagingCardMapper;
 
   public FetchAndStageCardsTasklet(TcgApiService tcgApiService, StagingCardRepository stagingCardRepo,
-      StagingCardMapper stagingCardMapper) {
+      StagingCardMapper stagingCardMapper, LooterScrapingErrorHandler looterScrapingErrorHandler) {
     this.tcgApiService = tcgApiService;
     this.stagingCardRepo = stagingCardRepo;
     this.stagingCardMapper = stagingCardMapper;
+    this.looterScrapingErrorHandler = looterScrapingErrorHandler;
   }
 
   @Override
   public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-    Long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getId();
-    LocalDateTime now = LocalDateTime.now();
+    try {
+      Long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getId();
+      LocalDateTime now = LocalDateTime.now();
 
-    List<JsonNode> cards = tcgApiService.fetchAllCards();
+      List<JsonNode> cards = tcgApiService.fetchAllCards();
 
-    List<StagingCard> entities = stagingCardMapper.toEntities(cards, jobId, now);
+      List<StagingCard> entities = stagingCardMapper.toEntities(cards, jobId, now);
 
-    stagingCardRepo.saveAll(entities);
+      stagingCardRepo.saveAll(entities);
 
-    return RepeatStatus.FINISHED;
+      return RepeatStatus.FINISHED;
+    } catch (Exception e) {
+      looterScrapingErrorHandler.handle(e, Constantes.STAGE_CARD_TASKLET_CONTEXT, Constantes.EXECUTE_ACTION,
+          Constantes.STAGING_CARD_ITEM);
+      return RepeatStatus.FINISHED;
+    }
   }
 }

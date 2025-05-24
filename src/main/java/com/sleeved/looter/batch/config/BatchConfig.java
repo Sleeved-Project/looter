@@ -6,30 +6,51 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.sleeved.looter.batch.listener.ImportScrappingListener;
+import com.sleeved.looter.batch.processor.CardDTOToBaseEntityCardProcessor;
 import com.sleeved.looter.batch.processor.PersonItemProcessor;
 import com.sleeved.looter.batch.reader.PersonItemReader;
+import com.sleeved.looter.batch.reader.StagingCardToCardDTOReader;
 import com.sleeved.looter.batch.tasklet.FetchAndStageCardsTasklet;
+import com.sleeved.looter.batch.writer.BaseEntityWriter;
 import com.sleeved.looter.batch.writer.PersonItemWriter;
 import com.sleeved.looter.domain.entity.Person;
+import com.sleeved.looter.infra.dto.BaseCardEntitiesProcessedDTO;
+import com.sleeved.looter.infra.dto.CardDTO;
 
 @Configuration
 public class BatchConfig {
   @Value("${looter.batch.chunksize:1}")
   private Integer chunkSize;
 
+  @Autowired
+  private ImportScrappingListener importScrappingListener;
+
   @Bean
-  public Job importPersonJob(JobRepository jobRepository, Step fetchCardsStageStep, Step stepExemple) {
+  public Job importScrapingJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep) {
     return new JobBuilder("importPersonJob", jobRepository)
         .incrementer(new RunIdIncrementer())
+        .listener(importScrappingListener)
         .start(fetchCardsStageStep)
-        .next(stepExemple)
+        .next(importBaseEntitiesStep)
         .build();
   }
+
+  // @Bean
+  // public Job importScrapingJob(JobRepository jobRepository, Step
+  // fetchCardsStageStep, Step importBaseEntitiesStep) {
+  // return new JobBuilder("importScrapingJob", jobRepository)
+  // .incrementer(new RunIdIncrementer())
+  // .listener(importScrappingListener)
+  // .start(importBaseEntitiesStep)
+  // .build();
+  // }
 
   @Bean
   public Step fetchCardsStageStep(
@@ -37,7 +58,24 @@ public class BatchConfig {
       PlatformTransactionManager transactionManager,
       FetchAndStageCardsTasklet fetchAndStageCardsTasklet) {
     return new StepBuilder("fetchCardsStageStep", jobRepository)
+        .listener(importScrappingListener)
         .tasklet(fetchAndStageCardsTasklet, transactionManager)
+        .build();
+  }
+
+  @Bean
+  public Step importBaseEntitiesStep(
+      JobRepository jobRepository,
+      PlatformTransactionManager transactionManager,
+      StagingCardToCardDTOReader reader,
+      CardDTOToBaseEntityCardProcessor processor,
+      BaseEntityWriter writer) {
+    return new StepBuilder("importBaseEntitiesStep", jobRepository)
+        .<CardDTO, BaseCardEntitiesProcessedDTO>chunk(chunkSize, transactionManager)
+        .listener(importScrappingListener)
+        .reader(reader)
+        .processor(processor)
+        .writer(writer)
         .build();
   }
 

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sleeved.looter.domain.entity.staging.StagingCard;
-import com.sleeved.looter.mock.StagingCardMock;
+import com.sleeved.looter.mock.domain.StagingCardMock;
 
 public class StagingCardMapperTest {
 
