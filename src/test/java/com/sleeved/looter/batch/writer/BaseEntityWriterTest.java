@@ -3,7 +3,6 @@ package com.sleeved.looter.batch.writer;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -18,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.item.Chunk;
 
 import com.sleeved.looter.common.exception.LooterScrapingException;
-import com.sleeved.looter.common.util.Constantes;
 import com.sleeved.looter.domain.entity.atlas.Ability;
 import com.sleeved.looter.domain.entity.atlas.Artist;
 import com.sleeved.looter.domain.entity.atlas.Attack;
