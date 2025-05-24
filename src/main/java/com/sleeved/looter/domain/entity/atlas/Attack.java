@@ -19,10 +19,10 @@ public class Attack {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private String text;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private String damage;
 
   @Column(nullable = false)

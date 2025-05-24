@@ -61,8 +61,11 @@ public class BaseEntityWriter implements ItemWriter<BaseCardEntitiesProcessedDTO
         }
         legalityService.getOrCreate(baseCardEntities.getLegalities());
       } catch (Exception e) {
+        String formatedItem = looterScrapingErrorHandler.formatErrorItem(
+            Constantes.BASE_CARD_ENTITIES_ITEM,
+            baseCardEntities.toString());
         looterScrapingErrorHandler.handle(e, Constantes.BASE_ENTITY_WRITER_CONTEXT, Constantes.WRITE_ACTION,
-            Constantes.BASE_CARD_ENTITIES_ITEM);
+            formatedItem);
       }
     }
   }

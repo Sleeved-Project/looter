@@ -15,9 +15,9 @@ public class AttackMapper {
     }
     Attack attack = new Attack();
     attack.setName(attackDTO.getName());
-    attack.setDamage(attackDTO.getDamage());
+    attack.setDamage(attackDTO.getDamage() == null || attackDTO.getDamage().isEmpty() ? null : attackDTO.getDamage());
     attack.setConvertedEnergyCost(attackDTO.getConvertedEnergyCost());
-    attack.setText(attackDTO.getText());
+    attack.setText(attackDTO.getText() == null || attackDTO.getText().isEmpty() ? null : attackDTO.getText());
     return attack;
   }
 

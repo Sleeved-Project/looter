@@ -12,11 +12,15 @@ public class LooterScrapingErrorHandler {
     throw new LooterScrapingException(message, e);
   }
 
-  public String formatErrorMessage(String context, String action, String item) {
+  public String formatErrorMessage(String context, String action, String formatedItem) {
     return String.format(
         Constantes.ERROR_MESSAGE_FORMAT,
         context,
         action,
-        item);
+        formatedItem);
+  }
+
+  public String formatErrorItem(String item, String details) {
+    return String.format(Constantes.ERROR_ITEM_FORMAT, item, details);
   }
 }

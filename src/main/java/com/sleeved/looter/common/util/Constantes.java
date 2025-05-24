@@ -29,6 +29,7 @@ public class Constantes {
   public static final String SPACE = "";
   // String formating
   public static final String ERROR_MESSAGE_FORMAT = "%s - An error occured where processing %s on %s";
+  public static final String ERROR_ITEM_FORMAT = "%s : %s";
   public static final String API_URL_FORMAT = "%s://%s";
   // TcgPlayer API
   public static final String TCG_API_URL_BASE_FORMAT = "%s/%s/%s";
