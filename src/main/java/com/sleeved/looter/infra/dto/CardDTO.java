@@ -16,8 +16,8 @@ public class CardDTO {
   private String evolvesFrom;
   private List<AbilityDTO> abilities;
   private List<AttackDTO> attacks;
-  private List<WeaknessDTO> weaknesses;
-  private List<ResistanceDTO> resistances;
+  private List<WeaknessDTO> weaknesses = List.of();
+  private List<ResistanceDTO> resistances = List.of();
   private List<String> retreatCost;
   private Integer convertedRetreatCost;
   private SetDTO set;

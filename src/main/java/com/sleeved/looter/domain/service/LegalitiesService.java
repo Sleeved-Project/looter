@@ -19,4 +19,12 @@ public class LegalitiesService {
         .findByStandardAndExpandedAndUnlimited(legality.getStandard(), legality.getExpanded(), legality.getUnlimited())
         .orElseGet(() -> legalitiesRepository.save(legality));
   }
+
+  public Legalities getByStandardExpandedUnlimited(Legalities legality) {
+    return legalitiesRepository
+        .findByStandardAndExpandedAndUnlimited(legality.getStandard(), legality.getExpanded(), legality.getUnlimited())
+        .orElseThrow(() -> new RuntimeException(
+            "Legalities not found for standard: " + legality.getStandard() + ", expanded: " + legality.getExpanded()
+                + ", unlimited: " + legality.getUnlimited()));
+  }
 }

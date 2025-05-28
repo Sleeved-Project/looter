@@ -1,7 +1,5 @@
 package com.sleeved.looter.infra.dto;
 
-import java.util.Map;
-
 import lombok.Data;
 
 @Data
@@ -11,7 +9,7 @@ public class SetDTO {
   private String series;
   private int printedTotal;
   private int total;
-  private Map<String, String> legalities;
+  private LegalitiesDTO legalities;
   private String ptcgoCode;
   private String releaseDate;
   private String updatedAt;

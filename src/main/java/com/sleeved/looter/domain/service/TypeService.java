@@ -18,4 +18,11 @@ public class TypeService {
     return typeRepository.findByLabel(type.getLabel())
         .orElseGet(() -> typeRepository.save(type));
   }
+
+  public Type getByLabel(Type type) {
+    return typeRepository
+        .findByLabel(type.getLabel())
+        .orElseThrow(() -> new RuntimeException(
+            "Type not found for label: " + type.getLabel()));
+  }
 }
