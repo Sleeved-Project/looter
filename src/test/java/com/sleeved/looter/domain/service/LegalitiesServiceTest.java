@@ -1,6 +1,7 @@
 package com.sleeved.looter.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -104,5 +105,66 @@ class LegalitiesServiceTest {
     assertThat(result.getUnlimited()).isNull();
     verify(legalitiesRepository).findByStandardAndExpandedAndUnlimited(null, null, null);
     verify(legalitiesRepository).save(inputLegalities);
+  }
+
+  @Test
+  void getByStandardExpandedUnlimited_shouldReturnLegalities_whenLegalitiesExists() {
+    Legalities inputLegalities = LegalitiesMock.createMockLegalities("Legal", "Legal", "Legal");
+    Legalities existingLegalities = LegalitiesMock.createMockLegalitiesSavedInDb(5, "Legal", "Legal", "Legal");
+
+    when(legalitiesRepository.findByStandardAndExpandedAndUnlimited("Legal", "Legal", "Legal"))
+        .thenReturn(Optional.of(existingLegalities));
+
+    Legalities result = legalitiesService.getByStandardExpandedUnlimited(inputLegalities);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(5);
+    assertThat(result.getStandard()).isEqualTo("Legal");
+    assertThat(result.getExpanded()).isEqualTo("Legal");
+    assertThat(result.getUnlimited()).isEqualTo("Legal");
+    verify(legalitiesRepository).findByStandardAndExpandedAndUnlimited("Legal", "Legal", "Legal");
+  }
+
+  @Test
+  void getByStandardExpandedUnlimited_shouldThrowException_whenLegalitiesDoesNotExist() {
+    Legalities inputLegalities = LegalitiesMock.createMockLegalities("Not Legal", "Not Legal", "Not Legal");
+
+    when(legalitiesRepository.findByStandardAndExpandedAndUnlimited("Not Legal", "Not Legal", "Not Legal"))
+        .thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> legalitiesService.getByStandardExpandedUnlimited(inputLegalities))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining(
+            "Legalities not found for standard: Not Legal, expanded: Not Legal, unlimited: Not Legal");
+
+    verify(legalitiesRepository).findByStandardAndExpandedAndUnlimited("Not Legal", "Not Legal", "Not Legal");
+  }
+
+  @Test
+  void getByStandardExpandedUnlimited_shouldHandleNullValues() {
+    Legalities inputLegalities = LegalitiesMock.createMockLegalities(null, "Legal", null);
+
+    when(legalitiesRepository.findByStandardAndExpandedAndUnlimited(null, "Legal", null))
+        .thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> legalitiesService.getByStandardExpandedUnlimited(inputLegalities))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Legalities not found for standard: null, expanded: Legal, unlimited: null");
+
+    verify(legalitiesRepository).findByStandardAndExpandedAndUnlimited(null, "Legal", null);
+  }
+
+  @Test
+  void getByStandardExpandedUnlimited_shouldHandleAllNullValues() {
+    Legalities inputLegalities = LegalitiesMock.createMockLegalities(null, null, null);
+
+    when(legalitiesRepository.findByStandardAndExpandedAndUnlimited(null, null, null))
+        .thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> legalitiesService.getByStandardExpandedUnlimited(inputLegalities))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Legalities not found for standard: null, expanded: null, unlimited: null");
+
+    verify(legalitiesRepository).findByStandardAndExpandedAndUnlimited(null, null, null);
   }
 }

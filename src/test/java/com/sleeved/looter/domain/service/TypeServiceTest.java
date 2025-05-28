@@ -1,6 +1,7 @@
 package com.sleeved.looter.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -75,5 +76,46 @@ class TypeServiceTest {
     assertThat(result.getLabel()).isNull();
     verify(typeRepository).findByLabel(null);
     verify(typeRepository).save(inputType);
+  }
+
+  @Test
+  void getByLabel_shouldReturnType_whenTypeExists() {
+    Type inputType = TypeMock.createMockType("Fire");
+    Type existingType = TypeMock.createMockTypeSavedInDb(4, "Fire");
+
+    when(typeRepository.findByLabel("Fire")).thenReturn(Optional.of(existingType));
+
+    Type result = typeService.getByLabel(inputType);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(4);
+    assertThat(result.getLabel()).isEqualTo("Fire");
+    verify(typeRepository).findByLabel("Fire");
+  }
+
+  @Test
+  void getByLabel_shouldThrowException_whenTypeDoesNotExist() {
+    Type inputType = TypeMock.createMockType("Dark");
+
+    when(typeRepository.findByLabel("Dark")).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> typeService.getByLabel(inputType))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Type not found for label: Dark");
+
+    verify(typeRepository).findByLabel("Dark");
+  }
+
+  @Test
+  void getByLabel_shouldHandleNullLabel() {
+    Type inputType = TypeMock.createMockType(null);
+
+    when(typeRepository.findByLabel(null)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> typeService.getByLabel(inputType))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Type not found for label: null");
+
+    verify(typeRepository).findByLabel(null);
   }
 }
