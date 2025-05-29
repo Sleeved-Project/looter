@@ -35,29 +35,29 @@ public class BatchConfig {
   @Autowired
   private ImportScrappingListener importScrappingListener;
 
-  // @Bean
-  // public Job importScrapingJob(JobRepository jobRepository, Step
-  // fetchCardsStageStep, Step importBaseEntitiesStep, Step
-  // importSetsWeaknessResitanceStep) {
-  // return new JobBuilder("importPersonJob", jobRepository)
-  // .incrementer(new RunIdIncrementer())
-  // .listener(importScrappingListener)
-  // .start(fetchCardsStageStep)
-  // .next(importBaseEntitiesStep)
-  // .next(importSetsWeaknessResitanceStep)
-  // .build();
-  // }
-
   @Bean
   public Job importScrapingJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep,
       Step importSetsWeaknessResitanceStep) {
-    return new JobBuilder("importScrapingJob", jobRepository)
+    return new JobBuilder("importPersonJob", jobRepository)
         .incrementer(new RunIdIncrementer())
         .listener(importScrappingListener)
-        .start(importBaseEntitiesStep)
+        .start(fetchCardsStageStep)
+        .next(importBaseEntitiesStep)
         .next(importSetsWeaknessResitanceStep)
         .build();
   }
+
+  // @Bean
+  // public Job importScrapingJob(JobRepository jobRepository, Step
+  // fetchCardsStageStep, Step importBaseEntitiesStep,
+  // Step importSetsWeaknessResitanceStep) {
+  // return new JobBuilder("importScrapingJob", jobRepository)
+  // .incrementer(new RunIdIncrementer())
+  // .listener(importScrappingListener)
+  // .start(importBaseEntitiesStep)
+  // .next(importSetsWeaknessResitanceStep)
+  // .build();
+  // }
 
   @Bean
   public Step fetchCardsStageStep(
