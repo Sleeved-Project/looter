@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.sleeved.looter.domain.entity.atlas.Attack;
 
 public interface AttackRepository extends JpaRepository<Attack, Integer> {
-  Optional<Attack> findByNameAndDamageAndConvertedEnergyCost(String name, String damage, Integer convertedEnergyCost);
+  Optional<Attack> findByNameAndDamageAndConvertedEnergyCostAndText(String name, String damage,
+      Integer convertedEnergyCost, String text);
 }

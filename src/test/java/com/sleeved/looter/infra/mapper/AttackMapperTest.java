@@ -3,6 +3,8 @@ package com.sleeved.looter.infra.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -81,6 +83,45 @@ public class AttackMapperTest {
   }
 
   @Test
+  void toEntity_shouldSetConvertedEnergyCostToZero_whenCostIsEmpty() {
+    AttackDTO dto = AttackDTOMock.createMockAttackDTO("Empty Cost Attack", List.of(), 5, "30", "Text");
+
+    Attack result = mapper.toEntity(dto);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getName()).isEqualTo("Empty Cost Attack");
+    assertThat(result.getDamage()).isEqualTo("30");
+    assertThat(result.getConvertedEnergyCost()).isEqualTo(0); // Devrait être 0 malgré le 5 dans le DTO
+    assertThat(result.getText()).isEqualTo("Text");
+  }
+
+  @Test
+  void toEntity_shouldSetConvertedEnergyCostToZero_whenCostIsNull() {
+    AttackDTO dto = AttackDTOMock.createMockAttackDTO("Null Cost Attack", null, 3, "40", "Text");
+
+    Attack result = mapper.toEntity(dto);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getName()).isEqualTo("Null Cost Attack");
+    assertThat(result.getDamage()).isEqualTo("40");
+    assertThat(result.getConvertedEnergyCost()).isEqualTo(0); // Devrait être 0 malgré le 3 dans le DTO
+    assertThat(result.getText()).isEqualTo("Text");
+  }
+
+  @Test
+  void toEntity_shouldSetConvertedEnergyCostToZero_whenCostIsFree() {
+    AttackDTO dto = AttackDTOMock.createMockAttackDTO("Free Attack", List.of("Free"), 2, "10", "This is free");
+
+    Attack result = mapper.toEntity(dto);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getName()).isEqualTo("Free Attack");
+    assertThat(result.getDamage()).isEqualTo("10");
+    assertThat(result.getConvertedEnergyCost()).isEqualTo(0); // Devrait être 0 malgré le 2 dans le DTO
+    assertThat(result.getText()).isEqualTo("This is free");
+  }
+
+  @Test
   void toListEntity_shouldMapMultipleAttacks() {
     List<AttackDTO> dtos = AttackDTOMock.createMockAttackDTOsList(2);
 
@@ -127,5 +168,87 @@ public class AttackMapperTest {
     assertThat(results.get(0).getDamage()).isEqualTo("Damage 1");
     assertThat(results.get(0).getConvertedEnergyCost()).isEqualTo(1);
     assertThat(results.get(0).getText()).isEqualTo("Text 1");
+  }
+
+  @Test
+  void toListEntity_shouldCorrectlyProcessMixedCostTypes() {
+    List<AttackDTO> dtos = new ArrayList<>();
+    dtos.add(AttackDTOMock.createMockAttackDTO("Normal Attack", List.of("Fire"), 1, "30", "Normal"));
+    dtos.add(AttackDTOMock.createMockAttackDTO("Free Attack", List.of("Free"), 3, "10", "Free"));
+    dtos.add(AttackDTOMock.createMockAttackDTO("Empty Attack", List.of(), 2, "20", "Empty"));
+
+    List<Attack> results = mapper.toListEntity(dtos);
+
+    assertThat(results).hasSize(3);
+
+    assertThat(results.get(0).getName()).isEqualTo("Normal Attack");
+    assertThat(results.get(0).getConvertedEnergyCost()).isEqualTo(1);
+
+    assertThat(results.get(1).getName()).isEqualTo("Free Attack");
+    assertThat(results.get(1).getConvertedEnergyCost()).isEqualTo(0); // Corrigé à 0
+
+    assertThat(results.get(2).getName()).isEqualTo("Empty Attack");
+    assertThat(results.get(2).getConvertedEnergyCost()).isEqualTo(0); // Corrigé à 0
+  }
+
+  @Test
+  void isFreeOrEmptyCost_shouldReturnTrue_whenCostIsNull() {
+    boolean result = mapper.isFreeOrEmptyCost(null);
+
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void isFreeOrEmptyCost_shouldReturnTrue_whenCostIsEmpty() {
+    List<String> emptyCost = Collections.emptyList();
+
+    boolean result = mapper.isFreeOrEmptyCost(emptyCost);
+
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void isFreeOrEmptyCost_shouldReturnTrue_whenCostIsFree() {
+    List<String> freeCost = Collections.singletonList("Free");
+
+    boolean result = mapper.isFreeOrEmptyCost(freeCost);
+
+    assertThat(result).isTrue();
+  }
+
+  @Test
+  void isFreeOrEmptyCost_shouldReturnFalse_whenCostHasOneNonFreeElement() {
+    List<String> singleNonFreeCost = Collections.singletonList("Fire");
+
+    boolean result = mapper.isFreeOrEmptyCost(singleNonFreeCost);
+
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  void isFreeOrEmptyCost_shouldReturnFalse_whenCostHasMultipleElements() {
+    List<String> multipleElementsCost = Arrays.asList("Fire", "Water");
+
+    boolean result = mapper.isFreeOrEmptyCost(multipleElementsCost);
+
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  void isFreeOrEmptyCost_shouldReturnFalse_whenCostHasFreeWithOtherElements() {
+    List<String> mixedCost = Arrays.asList("Free", "Water");
+
+    boolean result = mapper.isFreeOrEmptyCost(mixedCost);
+
+    assertThat(result).isFalse();
+  }
+
+  @Test
+  void isFreeOrEmptyCost_shouldBeCaseSensitive() {
+    List<String> lowerCaseCost = Collections.singletonList("free");
+
+    boolean result = mapper.isFreeOrEmptyCost(lowerCaseCost);
+
+    assertThat(result).isFalse();
   }
 }

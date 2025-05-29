@@ -15,10 +15,21 @@ public class AttackService {
   }
 
   public Attack getOrCreate(Attack attack) {
-    return attackRepository.findByNameAndDamageAndConvertedEnergyCost(
+    return attackRepository.findByNameAndDamageAndConvertedEnergyCostAndText(
         attack.getName(),
         attack.getDamage(),
-        attack.getConvertedEnergyCost())
+        attack.getConvertedEnergyCost(),
+        attack.getText())
         .orElseGet(() -> attackRepository.save(attack));
+  }
+
+  public Attack getByNameAndDamageAndConvertedEnegyCostAndText(Attack attack) {
+    return attackRepository.findByNameAndDamageAndConvertedEnergyCostAndText(
+        attack.getName(),
+        attack.getDamage(),
+        attack.getConvertedEnergyCost(), attack.getText())
+        .orElseThrow(() -> new RuntimeException(
+            "Attack not found for name: " + attack.getName() + ", damage: " + attack.getDamage()
+                + ", converted energy cost: " + attack.getConvertedEnergyCost() + ", text: " + attack.getText()));
   }
 }
