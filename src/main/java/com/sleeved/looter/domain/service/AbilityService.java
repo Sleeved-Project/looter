@@ -15,7 +15,7 @@ public class AbilityService {
   }
 
   public Ability getOrCreate(Ability ability) {
-    return abilityRepository.findByNameAndType(ability.getName(), ability.getType())
+    return abilityRepository.findByNameAndTypeAndText(ability.getName(), ability.getType(), ability.getText())
         .orElseGet(() -> abilityRepository.save(ability));
   }
 }

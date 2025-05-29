@@ -16,8 +16,12 @@ public class AttackMapper {
     Attack attack = new Attack();
     attack.setName(attackDTO.getName());
     attack.setDamage(attackDTO.getDamage() == null || attackDTO.getDamage().isEmpty() ? null : attackDTO.getDamage());
-    attack.setConvertedEnergyCost(attackDTO.getConvertedEnergyCost());
     attack.setText(attackDTO.getText() == null || attackDTO.getText().isEmpty() ? null : attackDTO.getText());
+    if (isFreeOrEmptyCost(attackDTO.getCost())) {
+      attack.setConvertedEnergyCost(0);
+    } else {
+      attack.setConvertedEnergyCost(attackDTO.getConvertedEnergyCost());
+    }
     return attack;
   }
 
@@ -29,5 +33,11 @@ public class AttackMapper {
         .map(this::toEntity)
         .filter(attack -> attack != null)
         .toList();
+  }
+
+  protected boolean isFreeOrEmptyCost(List<String> costs) {
+    return costs == null ||
+        costs.isEmpty() ||
+        (costs.size() == 1 && "Free".equals(costs.get(0)));
   }
 }
