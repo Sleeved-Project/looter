@@ -29,12 +29,21 @@ class AbilityServiceTest {
 
   @Test
   void getOrCreate_shouldReturnExistingAbility_whenAbilityExists() {
-    Ability inputAbility = AbilityMock.createMockAbility("Flying",
-        "This creature can only be blocked by creatures with flying.", "keyword");
-    Ability existingAbility = AbilityMock.createMockAbilitySavedInDb(1, "Flying",
-        "This creature can only be blocked by creatures with flying.", "keyword");
+    Ability inputAbility = AbilityMock.createMockAbility(
+        "Flying",
+        "This creature can only be blocked by creatures with flying.",
+        "keyword");
+    Ability existingAbility = AbilityMock.createMockAbilitySavedInDb(
+        1,
+        "Flying",
+        "This creature can only be blocked by creatures with flying.",
+        "keyword");
 
-    when(abilityRepository.findByNameAndType("Flying", "keyword")).thenReturn(Optional.of(existingAbility));
+    when(abilityRepository.findByNameAndTypeAndText(
+        "Flying",
+        "keyword",
+        "This creature can only be blocked by creatures with flying."))
+        .thenReturn(Optional.of(existingAbility));
 
     Ability result = abilityService.getOrCreate(inputAbility);
 
@@ -43,18 +52,31 @@ class AbilityServiceTest {
     assertThat(result.getName()).isEqualTo("Flying");
     assertThat(result.getText()).isEqualTo("This creature can only be blocked by creatures with flying.");
     assertThat(result.getType()).isEqualTo("keyword");
-    verify(abilityRepository).findByNameAndType("Flying", "keyword");
+
+    verify(abilityRepository).findByNameAndTypeAndText(
+        "Flying",
+        "keyword",
+        "This creature can only be blocked by creatures with flying.");
     verify(abilityRepository, never()).save(any(Ability.class));
   }
 
   @Test
   void getOrCreate_shouldCreateAndReturnNewAbility_whenAbilityDoesNotExist() {
-    Ability inputAbility = AbilityMock.createMockAbility("First Strike",
-        "This creature deals combat damage before creatures without first strike.", "keyword");
-    Ability savedAbility = AbilityMock.createMockAbilitySavedInDb(2, "First Strike",
-        "This creature deals combat damage before creatures without first strike.", "keyword");
+    Ability inputAbility = AbilityMock.createMockAbility(
+        "First Strike",
+        "This creature deals combat damage before creatures without first strike.",
+        "keyword");
+    Ability savedAbility = AbilityMock.createMockAbilitySavedInDb(
+        2,
+        "First Strike",
+        "This creature deals combat damage before creatures without first strike.",
+        "keyword");
 
-    when(abilityRepository.findByNameAndType("First Strike", "keyword")).thenReturn(Optional.empty());
+    when(abilityRepository.findByNameAndTypeAndText(
+        "First Strike",
+        "keyword",
+        "This creature deals combat damage before creatures without first strike."))
+        .thenReturn(Optional.empty());
     when(abilityRepository.save(inputAbility)).thenReturn(savedAbility);
 
     Ability result = abilityService.getOrCreate(inputAbility);
@@ -64,16 +86,21 @@ class AbilityServiceTest {
     assertThat(result.getName()).isEqualTo("First Strike");
     assertThat(result.getText()).isEqualTo("This creature deals combat damage before creatures without first strike.");
     assertThat(result.getType()).isEqualTo("keyword");
-    verify(abilityRepository).findByNameAndType("First Strike", "keyword");
+
+    verify(abilityRepository).findByNameAndTypeAndText(
+        "First Strike",
+        "keyword",
+        "This creature deals combat damage before creatures without first strike.");
     verify(abilityRepository).save(inputAbility);
   }
 
   @Test
-  void getOrCreate_shouldHandleNullNameAndType() {
+  void getOrCreate_shouldHandleNullValues() {
     Ability inputAbility = AbilityMock.createMockAbility(null, "Some text", null);
     Ability savedAbility = AbilityMock.createMockAbilitySavedInDb(3, null, "Some text", null);
 
-    when(abilityRepository.findByNameAndType(null, null)).thenReturn(Optional.empty());
+    when(abilityRepository.findByNameAndTypeAndText(null, null, "Some text"))
+        .thenReturn(Optional.empty());
     when(abilityRepository.save(inputAbility)).thenReturn(savedAbility);
 
     Ability result = abilityService.getOrCreate(inputAbility);
@@ -83,7 +110,8 @@ class AbilityServiceTest {
     assertThat(result.getName()).isNull();
     assertThat(result.getText()).isEqualTo("Some text");
     assertThat(result.getType()).isNull();
-    verify(abilityRepository).findByNameAndType(null, null);
+
+    verify(abilityRepository).findByNameAndTypeAndText(null, null, "Some text");
     verify(abilityRepository).save(inputAbility);
   }
 }
