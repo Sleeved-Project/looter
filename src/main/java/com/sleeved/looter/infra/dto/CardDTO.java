@@ -13,7 +13,7 @@ public class CardDTO {
   private String level;
   private String hp;
   private List<String> types;
-  private String evolvesFrom;
+  private List<String> evolvesTo;
   private List<AbilityDTO> abilities;
   private List<AttackDTO> attacks;
   private List<WeaknessDTO> weaknesses = List.of();

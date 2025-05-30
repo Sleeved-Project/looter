@@ -18,4 +18,10 @@ public class SetService {
     return setRepository.findById(set.getId())
         .orElseGet(() -> setRepository.save(set));
   }
+
+  public Set getById(String setId) {
+    return setRepository.findById(setId)
+        .orElseThrow(() -> new RuntimeException(
+            "Set not found for id: " + setId));
+  }
 }

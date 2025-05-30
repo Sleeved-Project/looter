@@ -1,6 +1,7 @@
 package com.sleeved.looter.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -110,5 +111,42 @@ class SetServiceTest {
 
     verify(setRepository).findById("sm1");
     verify(setRepository).save(inputSet);
+  }
+
+  @Test
+  void getById_shouldReturnSet_whenSetExists() {
+    String setId = "swsh1";
+    Legalities legalities = LegalitiesMock.createMockLegalitiesSavedInDb(4, "Legal", "Legal", "Legal");
+    Set existingSet = SetMock.createMockSet(setId, "Sword & Shield", "Sword & Shield", 202, 202, "SSH",
+        "symbol-swsh.png", "logo-swsh.png", legalities);
+
+    when(setRepository.findById(setId)).thenReturn(Optional.of(existingSet));
+
+    Set result = setService.getById(setId);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(setId);
+    assertThat(result.getName()).isEqualTo("Sword & Shield");
+    assertThat(result.getSeries()).isEqualTo("Sword & Shield");
+    assertThat(result.getPrintedTotal()).isEqualTo(202);
+    assertThat(result.getTotal()).isEqualTo(202);
+    assertThat(result.getPtcgoCode()).isEqualTo("SSH");
+    assertThat(result.getImageSymbol()).isEqualTo("symbol-swsh.png");
+    assertThat(result.getImageLogo()).isEqualTo("logo-swsh.png");
+    assertThat(result.getLegalities()).isEqualTo(legalities);
+
+    verify(setRepository).findById(setId);
+  }
+
+  @Test
+  void getById_shouldThrowException_whenSetDoesNotExist() {
+    String setId = "nonexistent";
+    when(setRepository.findById(setId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> setService.getById(setId))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Set not found for id: nonexistent");
+
+    verify(setRepository).findById(setId);
   }
 }
