@@ -18,4 +18,10 @@ public class RarityService {
     return rarityRepository.findByLabel(rarity.getLabel())
         .orElseGet(() -> rarityRepository.save(rarity));
   }
+
+  public Rarity getByLable(String rarityLabel) {
+    return rarityRepository.findByLabel(rarityLabel)
+        .orElseThrow(() -> new RuntimeException(
+            "Rarity not found for label: " + rarityLabel));
+  }
 }

@@ -17,4 +17,10 @@ public class ArtistService {
     return artistRepository.findByName(artist.getName())
         .orElseGet(() -> artistRepository.save(artist));
   }
+
+  public Artist getByName(String artistName) {
+    return artistRepository.findByName(artistName)
+        .orElseThrow(() -> new RuntimeException(
+            "Artist not found for name: " + artistName));
+  }
 }
