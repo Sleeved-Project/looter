@@ -1,6 +1,7 @@
 package com.sleeved.looter.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,16 +30,13 @@ class SubtypeServiceTest {
 
   @Test
   void getOrCreate_shouldReturnExistingSubtype_whenSubtypeExists() {
-    // Préparation
     Subtype inputSubtype = SubtypeMock.createMockSubtype("Basic");
     Subtype existingSubtype = SubtypeMock.createMockSubtypeSavedInDb(1, "Basic");
 
     when(subtypeRepository.findByLabel("Basic")).thenReturn(Optional.of(existingSubtype));
 
-    // Exécution
     Subtype result = subtypeService.getOrCreate(inputSubtype);
 
-    // Vérification
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(1);
     assertThat(result.getLabel()).isEqualTo("Basic");
@@ -48,17 +46,14 @@ class SubtypeServiceTest {
 
   @Test
   void getOrCreate_shouldCreateAndReturnNewSubtype_whenSubtypeDoesNotExist() {
-    // Préparation
     Subtype inputSubtype = SubtypeMock.createMockSubtype("Evolution");
     Subtype savedSubtype = SubtypeMock.createMockSubtypeSavedInDb(2, "Evolution");
 
     when(subtypeRepository.findByLabel("Evolution")).thenReturn(Optional.empty());
     when(subtypeRepository.save(inputSubtype)).thenReturn(savedSubtype);
 
-    // Exécution
     Subtype result = subtypeService.getOrCreate(inputSubtype);
 
-    // Vérification
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(2);
     assertThat(result.getLabel()).isEqualTo("Evolution");
@@ -68,21 +63,63 @@ class SubtypeServiceTest {
 
   @Test
   void getOrCreate_shouldHandleNullLabel() {
-    // Préparation
     Subtype inputSubtype = SubtypeMock.createMockSubtype(null);
     Subtype savedSubtype = SubtypeMock.createMockSubtypeSavedInDb(3, null);
 
     when(subtypeRepository.findByLabel(null)).thenReturn(Optional.empty());
     when(subtypeRepository.save(inputSubtype)).thenReturn(savedSubtype);
 
-    // Exécution
     Subtype result = subtypeService.getOrCreate(inputSubtype);
 
-    // Vérification
     assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(3);
     assertThat(result.getLabel()).isNull();
     verify(subtypeRepository).findByLabel(null);
     verify(subtypeRepository).save(inputSubtype);
+  }
+
+  @Test
+  void getByLabel_shouldReturnSubtype_whenSubtypeExists() {
+    String label = "Stage 1";
+    Subtype existingSubtype = SubtypeMock.createMockSubtypeSavedInDb(4, label);
+
+    when(subtypeRepository.findByLabel(label)).thenReturn(Optional.of(existingSubtype));
+
+    Subtype result = subtypeService.getByLabel(label);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(4);
+    assertThat(result.getLabel()).isEqualTo("Stage 1");
+
+    verify(subtypeRepository).findByLabel(label);
+  }
+
+  @Test
+  void getByLabel_shouldThrowException_whenSubtypeDoesNotExist() {
+    String label = "NonExistentSubtype";
+
+    when(subtypeRepository.findByLabel(label)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> subtypeService.getByLabel(label))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Subtype not found for label: " + label);
+
+    verify(subtypeRepository).findByLabel(label);
+  }
+
+  @Test
+  void getByLabel_shouldHandleNullLabel() {
+    String label = null;
+    Subtype existingSubtype = SubtypeMock.createMockSubtypeSavedInDb(5, null);
+
+    when(subtypeRepository.findByLabel(null)).thenReturn(Optional.of(existingSubtype));
+
+    Subtype result = subtypeService.getByLabel(label);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(5);
+    assertThat(result.getLabel()).isNull();
+
+    verify(subtypeRepository).findByLabel(null);
   }
 }

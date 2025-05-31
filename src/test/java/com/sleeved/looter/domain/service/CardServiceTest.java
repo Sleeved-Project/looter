@@ -1,6 +1,7 @@
 package com.sleeved.looter.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -197,5 +198,76 @@ class CardServiceTest {
 
     verify(cardRepository).findById("swsh1-1");
     verify(cardRepository).save(inputCard);
+  }
+
+  @Test
+  void getById_shouldReturnCard_whenCardExists() {
+    Artist artist = ArtistMock.createMockArtistSavedInDb(3, "5ban Graphics");
+    Rarity rarity = RarityMock.createMockRaritySavedInDb(3, "Rare Holo");
+    Legalities legalities = LegalitiesMock.createMockLegalitiesSavedInDb(3, "Legal", "Legal", "Legal");
+    Set set = SetMock.createMockSet("swsh4", "Vivid Voltage", "Sword & Shield", 185, 203, "VIV",
+        "symbol-swsh4.png", "logo-swsh4.png", legalities);
+
+    Card existingCard = CardMock.createMockCard(
+        "swsh4-25",
+        "Pikachu VMAX",
+        "Pokémon",
+        null,
+        "320",
+        null,
+        2,
+        "25",
+        "https://images.pokemontcg.io/swsh4/25_large.png",
+        "https://images.pokemontcg.io/swsh4/25_small.png",
+        "When it's in a playful mood, this Pokémon generates electricity and lets it crackle across its body.",
+        "25",
+        artist,
+        rarity,
+        set,
+        legalities);
+
+    when(cardRepository.findById("swsh4-25")).thenReturn(Optional.of(existingCard));
+
+    Card result = cardService.getById("swsh4-25");
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo("swsh4-25");
+    assertThat(result.getName()).isEqualTo("Pikachu VMAX");
+    assertThat(result.getSupertype()).isEqualTo("Pokémon");
+    assertThat(result.getHp()).isEqualTo("320");
+    assertThat(result.getImageLarge()).isEqualTo("https://images.pokemontcg.io/swsh4/25_large.png");
+    assertThat(result.getArtist()).isEqualTo(artist);
+    assertThat(result.getRarity()).isEqualTo(rarity);
+    assertThat(result.getSet()).isEqualTo(set);
+
+    verify(cardRepository).findById("swsh4-25");
+  }
+
+  @Test
+  void getById_shouldThrowException_whenCardDoesNotExist() {
+    String nonExistingId = "non-existing-123";
+    when(cardRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> cardService.getById(nonExistingId))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("Card not found for id: " + nonExistingId);
+
+    verify(cardRepository).findById(nonExistingId);
+  }
+
+  @Test
+  void getById_shouldHandleSpecialCharactersInId() {
+    String specialId = "base1-4/SV";
+    Card specialCard = CardMock.createBasicMockCard(specialId, "Special Charizard");
+
+    when(cardRepository.findById(specialId)).thenReturn(Optional.of(specialCard));
+
+    Card result = cardService.getById(specialId);
+
+    assertThat(result).isNotNull();
+    assertThat(result.getId()).isEqualTo(specialId);
+    assertThat(result.getName()).isEqualTo("Special Charizard");
+
+    verify(cardRepository).findById(specialId);
   }
 }
