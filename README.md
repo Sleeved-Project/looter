@@ -141,18 +141,21 @@ com.sleeved.looter
 ├── batch
 │   ├── config           → Configuration Spring Batch & DataSources
 │   ├── job              → Définition des jobs et des steps
-│   ├── tasklet          → Tasklets (appel API)
-│   ├── reader           → ItemReader personnalisés
+│   ├── listener         → Définition des listener
 │   ├── processor        → ItemProcessor (mapping, validation…)
+│   ├── reader           → ItemReader personnalisés
+│   ├── tasklet          → Tasklets (par exemple pour l'appel API)
 │   └── writer           → ItemWriter
 ├── domain
-│   ├── entity           → Entités JPA
+│   ├── entity           → Entités JPA (Card, Rarity, Artist…)
 │   ├── repository       → Repositories Spring Data
-│   └── enums            → Enums utilisés dans le domaine
-├── infrastructure
+│   ├── enums            → Enums utilisés dans le domaine (par exemple, type de carte)
+│   └── service          → Service (logique de traitement domaine base de données)
+├── infra
 │   ├── dto              → Objets de transfert issus du JSON
 │   ├── mapper           → Mapping entre DTOs et entités
-│   └── service          → Services traitement métier et api
+│   ├── processor        → Process entre DTOs et entités
+│   └── service          → Services (logique de traitement métier, API calls, etc.)
 └── common
     ├── util             → Méthodes utilitaires diverses
     ├── exception        → Exceptions customisées
