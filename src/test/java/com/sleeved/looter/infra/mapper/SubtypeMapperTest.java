@@ -58,13 +58,10 @@ public class SubtypeMapperTest {
 
   @Test
   void toListEntity_shouldMapMultipleLabels() {
-    // Given
     List<String> subtypeLabels = Arrays.asList("Human", "Wizard", "Warrior");
 
-    // When
     List<Subtype> results = mapper.toListEntity(subtypeLabels);
 
-    // Then
     assertThat(results).hasSize(3);
     assertThat(results.get(0).getLabel()).isEqualTo("Human");
     assertThat(results.get(1).getLabel()).isEqualTo("Wizard");

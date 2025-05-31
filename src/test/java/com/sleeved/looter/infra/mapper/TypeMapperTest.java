@@ -48,13 +48,10 @@ public class TypeMapperTest {
 
   @Test
   void toEntity_shouldHandleEmptyLabel() {
-    // Given
     String typeLabel = "";
 
-    // When
     Type result = mapper.toEntity(typeLabel);
 
-    // Then
     assertThat(result).isNotNull();
     assertThat(result.getLabel()).isEqualTo("UNKNOWN");
   }

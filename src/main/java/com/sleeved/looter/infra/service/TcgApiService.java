@@ -61,18 +61,11 @@ public class TcgApiService {
           allCards.add(card);
         }
 
-        // ! Real condition for production
         int total = root.path("totalCount").asInt();
         if (page * apiCardPageSize >= total) {
           log.info("All cards fetched");
           break;
         }
-
-        // // ! Test condition for testing
-        // if (page * apiCardPageSize >= apiCardPageSize * 20) {
-        // log.info("All cards fetched");
-        // break;
-        // }
 
         page++;
       } catch (Exception e) {

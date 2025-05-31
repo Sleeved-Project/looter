@@ -77,9 +77,9 @@ public class AttackMapperTest {
 
     assertThat(result).isNotNull();
     assertThat(result.getName()).isEqualTo("Quick Attack");
-    assertThat(result.getDamage()).isNull(); // Vérifie que les chaînes vides sont converties en null
+    assertThat(result.getDamage()).isNull();
     assertThat(result.getConvertedEnergyCost()).isEqualTo(1);
-    assertThat(result.getText()).isNull(); // Vérifie que les chaînes vides sont converties en null
+    assertThat(result.getText()).isNull();
   }
 
   @Test
@@ -91,7 +91,7 @@ public class AttackMapperTest {
     assertThat(result).isNotNull();
     assertThat(result.getName()).isEqualTo("Empty Cost Attack");
     assertThat(result.getDamage()).isEqualTo("30");
-    assertThat(result.getConvertedEnergyCost()).isEqualTo(0); // Devrait être 0 malgré le 5 dans le DTO
+    assertThat(result.getConvertedEnergyCost()).isEqualTo(0);
     assertThat(result.getText()).isEqualTo("Text");
   }
 
@@ -104,7 +104,7 @@ public class AttackMapperTest {
     assertThat(result).isNotNull();
     assertThat(result.getName()).isEqualTo("Null Cost Attack");
     assertThat(result.getDamage()).isEqualTo("40");
-    assertThat(result.getConvertedEnergyCost()).isEqualTo(0); // Devrait être 0 malgré le 3 dans le DTO
+    assertThat(result.getConvertedEnergyCost()).isEqualTo(0);
     assertThat(result.getText()).isEqualTo("Text");
   }
 
@@ -117,7 +117,7 @@ public class AttackMapperTest {
     assertThat(result).isNotNull();
     assertThat(result.getName()).isEqualTo("Free Attack");
     assertThat(result.getDamage()).isEqualTo("10");
-    assertThat(result.getConvertedEnergyCost()).isEqualTo(0); // Devrait être 0 malgré le 2 dans le DTO
+    assertThat(result.getConvertedEnergyCost()).isEqualTo(0);
     assertThat(result.getText()).isEqualTo("This is free");
   }
 
@@ -185,10 +185,10 @@ public class AttackMapperTest {
     assertThat(results.get(0).getConvertedEnergyCost()).isEqualTo(1);
 
     assertThat(results.get(1).getName()).isEqualTo("Free Attack");
-    assertThat(results.get(1).getConvertedEnergyCost()).isEqualTo(0); // Corrigé à 0
+    assertThat(results.get(1).getConvertedEnergyCost()).isEqualTo(0);
 
     assertThat(results.get(2).getName()).isEqualTo("Empty Attack");
-    assertThat(results.get(2).getConvertedEnergyCost()).isEqualTo(0); // Corrigé à 0
+    assertThat(results.get(2).getConvertedEnergyCost()).isEqualTo(0);
   }
 
   @Test

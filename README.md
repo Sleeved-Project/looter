@@ -76,36 +76,26 @@ spring:
 mvn clean install
 ```
 
-Le JAR sera généré dans target/looter-0.0.1-SNAPSHOT.jar.
+La nouvelle `version` du JAR sera généré dans `target/looter-<version>-SNAPSHOT.jar`.
 
 ---
 
 ## ▶️ Exécution du batch
 
-Depuis une IDE
+**Depuis VsCode :**
 
-- Ouvrir le projet dans votre IDE préféré.
-- Ajouter `-Dspring.profiles.active=local` dans les VM options de la configuration de lancement
-- Lancer la classe LooterApplication.java qui contient public static void main.
+- Ouvrez le projet dans VS Code.
+- Ouvrez le panneau (▶️) Run and (🐞) Debug `(Ctrl+Shift+D)`.
+- Sélectionnez la configuration `Run Spring Batch Job`.
+- Choisissez le profil Spring `local`.
+- Choisissez le nom du job à exécuter.
 
-Depuis le Spring Boot Dashboard
+💡 Cette configuration est définie dans .vscode/launch.json et est partagée dans le repo.
 
-- Ouvrez la vue Spring Boot Dashboard (menu View > Tool Windows > Spring Boot Dashboard).
-- Sélectionnez l’application looter dans la liste des projets Spring Boot.
-- Accèder au menu contextuel en réalisant un clique droit sur le looter
-- Choisir (▶️)`Run with profile` ou (🐞)`Debug with profile` dans le menu contextuel
-- Choisir le profile `local`
-
-Depuis la ligne de commande
+**Depuis la ligne de commande :**
 
 ```bash
-java -Dspring.profiles.active=local -jar target/looter-0.0.1-SNAPSHOT.jar
-```
-
-💡 Pour lancer un job spécifique
-
-```bash
-java -Dspring.profiles.active=local -jar target/looter-0.0.1-SNAPSHOT.jar --spring.batch.job.name=nomDuJob param1=value1
+java -Dspring.profiles.active=<profile> -jar target/<nom-du-jar>.jar --spring.batch.job.name=<nom-du-job>
 ```
 
 ---
@@ -151,23 +141,34 @@ com.sleeved.looter
 ├── batch
 │   ├── config           → Configuration Spring Batch & DataSources
 │   ├── job              → Définition des jobs et des steps
-│   ├── tasklet          → Tasklets (appel API)
-│   ├── reader           → ItemReader personnalisés
+│   ├── listener         → Définition des listener
 │   ├── processor        → ItemProcessor (mapping, validation…)
+│   ├── reader           → ItemReader personnalisés
+│   ├── tasklet          → Tasklets (par exemple pour l'appel API)
 │   └── writer           → ItemWriter
 ├── domain
-│   ├── entity           → Entités JPA
+│   ├── entity           → Entités JPA (Card, Rarity, Artist…)
 │   ├── repository       → Repositories Spring Data
-│   └── enums            → Enums utilisés dans le domaine
-├── infrastructure
+│   ├── enums            → Enums utilisés dans le domaine (par exemple, type de carte)
+│   └── service          → Service (logique de traitement domaine base de données)
+├── infra
 │   ├── dto              → Objets de transfert issus du JSON
 │   ├── mapper           → Mapping entre DTOs et entités
-│   └── service          → Services traitement métier et api
+│   ├── processor        → Process entre DTOs et entités
+│   └── service          → Services (logique de traitement métier, API calls, etc.)
 └── common
     ├── util             → Méthodes utilitaires diverses
     ├── exception        → Exceptions customisées
     └── cache            → Services de cache mémoire
 ```
+
+---
+
+## 🔧 Ajouter un nouveau job
+
+- Déclarez un bean `@Bean(name = "nomDuNouveauJob")` dans une classe de configuration Spring Batch.
+- Ajoutez le nom du job dans .vscode/launch.json > inputs > jobName (optionnel mais recommandé pour VS Code).
+- Documentez l’usage dans ce README.
 
 ---
 

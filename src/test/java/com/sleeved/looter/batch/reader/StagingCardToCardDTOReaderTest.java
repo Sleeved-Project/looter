@@ -110,7 +110,6 @@ class StagingCardToCardDTOReaderTest {
 
     reader = new StagingCardToCardDTOReader(stagingCardRepository, objectMapper, errorHandler);
 
-    // Vérifier que l'exception est bien propagée
     assertThatThrownBy(() -> reader.read())
         .isInstanceOf(LooterScrapingException.class);
   }

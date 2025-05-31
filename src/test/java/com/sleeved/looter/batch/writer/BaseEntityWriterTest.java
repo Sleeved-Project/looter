@@ -139,8 +139,8 @@ class BaseEntityWriterTest {
     Artist artist2 = ArtistMock.createMockArtist("Artist 2");
     List<Type> types2 = Arrays.asList(TypeMock.createMockType("Trainer"));
     List<Subtype> subtypes2 = Arrays.asList(SubtypeMock.createMockSubtype("Item"));
-    List<Ability> abilities2 = Collections.emptyList(); // Pas d'abilities pour ce DTO
-    List<Attack> attacks2 = Collections.emptyList(); // Pas d'attacks pour ce DTO
+    List<Ability> abilities2 = Collections.emptyList();
+    List<Attack> attacks2 = Collections.emptyList();
     Legalities legalities2 = LegalitiesMock.createMockLegalities("Not Legal", "Legal", "Legal");
 
     dto2.setRarity(rarity2);

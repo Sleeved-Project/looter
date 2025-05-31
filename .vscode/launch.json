@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run Spring Batch Job",
+      "request": "launch",
+      "mainClass": "com.sleeved.looter.LooterApplication",
+      "projectName": "looter",
+      "args": "--spring.profiles.active=${input:profile} --spring.batch.job.name=${input:jobName}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "profile",
+      "type": "pickString",
+      "description": "Which Spring profile do you want to use ?",
+      "options": ["local", "dev", "prod"],
+      "default": "local"
+    },
+    {
+      "id": "jobName",
+      "type": "pickString",
+      "description": "What job do you want to run ?",
+      "options": ["importPersonJob", "importScrapingJob"],
+      "default": "importScrapingJob"
+    }
+  ]
+}
