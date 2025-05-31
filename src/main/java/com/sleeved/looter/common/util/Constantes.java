@@ -15,6 +15,8 @@ public class Constantes {
   public static final String SETS_WEAKNESS_RESISTANCE_ENTITIES_WRITER_CONTEXT = "SETS WEAKNESS RESISTANCE ENTITIES WRITER";
   public static final String CARD_DTO_TO_CARD_ENTITIES_PROCESSOR_CONTEXT = "CARD DTO TO CARD ENTITIES PROCESSOR";
   public static final String CARD_ENTITIES_WRITER_CONTEXT = "CARD ENTITIES WRITER";
+  public static final String CARD_DTO_TO_LINK_CARD_RELATIONS_ENTITIES_PROCESSOR_CONTEXT = "CARD DTO TO LINK CARD RELATIONS ENTITIES PROCESSOR";
+  public static final String LINK_CARD_RELATIONS_ENTITIES_WRITER_CONTEXT = "LINK CARD RELATIONS ENTITIES WRITER";
   // Error action
   public static final String CREATE_ACTION = "CREATE";
   public static final String UPDATE_ACTION = "UPDATE";
@@ -32,6 +34,7 @@ public class Constantes {
   public static final String SETS_WEAKNESS_RESISTANCE_CARD_ENTITIES_ITEM = "SETS WEAKNESS RESISTANCE CARD ENTITIES";
   public static final String COST_ATTACK_CARD_ENTITIES_ITEM = "COST ATTACK CARD ENTITIES";
   public static final String CARD_ENTITIES_ITEM = "CARD ENTITIES";
+  public static final String LINK_CARD_RELATIONS_ENTITIES_ITEM = "LINK_CARD_RELATIONS ENTITIES";
   // Logger formating
   public static final String LINE_BREAK = "\n";
   public static final String SPACE = "";

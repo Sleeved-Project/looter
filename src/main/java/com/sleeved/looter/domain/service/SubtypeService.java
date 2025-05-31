@@ -18,4 +18,9 @@ public class SubtypeService {
     return subtypeRepository.findByLabel(subtype.getLabel())
         .orElseGet(() -> subtypeRepository.save(subtype));
   }
+
+  public Subtype getByLabel(String label) {
+    return subtypeRepository.findByLabel(label)
+        .orElseThrow(() -> new RuntimeException("Subtype not found for label: " + label));
+  }
 }

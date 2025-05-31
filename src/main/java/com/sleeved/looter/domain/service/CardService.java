@@ -18,4 +18,10 @@ public class CardService {
     return cardRepository.findById(card.getId())
         .orElseGet(() -> cardRepository.save(card));
   }
+
+  public Card getById(String cardId) {
+    return cardRepository.findById(cardId)
+        .orElseThrow(() -> new RuntimeException(
+            "Card not found for id: " + cardId));
+  }
 }

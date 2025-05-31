@@ -18,4 +18,12 @@ public class ResistanceService {
     return resistanceRepository.findByTypeAndValue(resistance.getType(), resistance.getValue())
         .orElseGet(() -> resistanceRepository.save(resistance));
   }
+
+  public Resistance getByTypeAndValue(Resistance resistance) {
+    return resistanceRepository.findByTypeAndValue(
+        resistance.getType(),
+        resistance.getValue())
+        .orElseThrow(() -> new RuntimeException(
+            "Resistance not found for type: " + resistance.getType() + ", value: " + resistance.getValue()));
+  }
 }
