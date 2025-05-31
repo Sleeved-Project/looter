@@ -18,4 +18,12 @@ public class WeaknessService {
     return weaknessRepository.findByTypeAndValue(weakness.getType(), weakness.getValue())
         .orElseGet(() -> weaknessRepository.save(weakness));
   }
+
+  public Weakness getByTypeAndValue(Weakness weakness) {
+    return weaknessRepository.findByTypeAndValue(
+        weakness.getType(),
+        weakness.getValue())
+        .orElseThrow(() -> new RuntimeException(
+            "Weakness not found for type: " + weakness.getType() + ", value: " + weakness.getValue()));
+  }
 }

@@ -18,4 +18,11 @@ public class AbilityService {
     return abilityRepository.findByNameAndTypeAndText(ability.getName(), ability.getType(), ability.getText())
         .orElseGet(() -> abilityRepository.save(ability));
   }
+
+  public Ability getByNameAndTypeAndText(Ability ability) {
+    return abilityRepository.findByNameAndTypeAndText(ability.getName(), ability.getType(), ability.getText())
+        .orElseThrow(() -> new RuntimeException(
+            "Ability not found for name: " + ability.getName() + ", type: " + ability.getType()
+                + ", text: " + ability.getText()));
+  }
 }
