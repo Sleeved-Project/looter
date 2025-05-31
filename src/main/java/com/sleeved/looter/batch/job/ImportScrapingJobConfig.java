@@ -1,4 +1,4 @@
-package com.sleeved.looter.batch.config;
+package com.sleeved.looter.batch.job;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -33,38 +33,22 @@ import com.sleeved.looter.infra.dto.LinkCardRelationsEntitiesProcessedDTO;
 import com.sleeved.looter.infra.dto.SetsWeaknessResistanceCardEntitiesProcessedDTO;
 
 @Configuration
-public class BatchConfig {
+public class ImportScrapingJobConfig {
   @Value("${looter.batch.chunksize:1}")
   private Integer chunkSize;
 
   @Autowired
   private ImportScrappingListener importScrappingListener;
 
-  // @Bean
-  // public Job importScrapingJob(JobRepository jobRepository, Step
-  // fetchCardsStageStep, Step importBaseEntitiesStep,
-  // Step importSetsWeaknessResitanceStep, Step importCostAttackStep, Step
-  // importCardsStep, Step linkCardRelationsStep) {
-  // return new JobBuilder("importScrapingJob", jobRepository)
-  // .incrementer(new RunIdIncrementer())
-  // .listener(importScrappingListener)
-  // .start(fetchCardsStageStep)
-  // .next(importBaseEntitiesStep)
-  // .next(importSetsWeaknessResitanceStep)
-  // .next(importCostAttackStep)
-  // .next(importCardsStep)
-  // .next(linkCardRelationsStep)
-  // .build();
-  // }
-
   @Bean
-  public Job importScrapingJob(JobRepository jobRepository, Step importBaseEntitiesStep,
+  public Job importScrapingJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep,
       Step importSetsWeaknessResitanceStep, Step importCostAttackStep, Step importCardsStep,
       Step linkCardRelationsStep) {
     return new JobBuilder("importScrapingJob", jobRepository)
         .incrementer(new RunIdIncrementer())
         .listener(importScrappingListener)
-        .start(importBaseEntitiesStep)
+        .start(fetchCardsStageStep)
+        .next(importBaseEntitiesStep)
         .next(importSetsWeaknessResitanceStep)
         .next(importCostAttackStep)
         .next(importCardsStep)
