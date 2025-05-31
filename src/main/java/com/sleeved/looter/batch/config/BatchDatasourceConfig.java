@@ -24,7 +24,7 @@ import jakarta.persistence.EntityManagerFactory;
 public class BatchDatasourceConfig {
   @Bean(name = "datasource")
   @Primary
-  @ConfigurationProperties(prefix = "spring.datasource.hikari") // Pour utiliser les propriétés de application.yml
+  @ConfigurationProperties(prefix = "spring.datasource.hikari")
   public DataSource dataSource() {
     return DataSourceBuilder.create().build();
   }
@@ -39,7 +39,7 @@ public class BatchDatasourceConfig {
 
     return builder
         .dataSource(dataSource)
-        .packages("com.sleeved.looter.domain.entity.primary") // Package pour les entités principales
+        .packages("com.sleeved.looter.domain.entity.primary")
         .persistenceUnit("primary")
         .properties(properties)
         .build();

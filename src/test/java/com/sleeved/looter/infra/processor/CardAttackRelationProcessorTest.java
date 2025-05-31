@@ -53,7 +53,6 @@ class CardAttackRelationProcessorTest {
 
   @BeforeEach
   void setUp() {
-    // Création des objets de base pour les tests
     card = CardMock.createBasicMockCard("swsh1-25", "Pikachu");
 
     attackDTO = AttackDTOMock.createMockAttackDTO(
@@ -81,10 +80,8 @@ class CardAttackRelationProcessorTest {
 
   @Test
   void process_shouldReturnEmptyList_whenAttackDTOListIsNull() {
-    // Act
     List<CardAttack> result = processor.process(null, card);
 
-    // Assert
     assertThat(result).isNotNull();
     assertThat(result).isEmpty();
 
@@ -95,10 +92,8 @@ class CardAttackRelationProcessorTest {
 
   @Test
   void process_shouldReturnEmptyList_whenAttackDTOListIsEmpty() {
-    // Act
     List<CardAttack> result = processor.process(Collections.emptyList(), card);
 
-    // Assert
     assertThat(result).isNotNull();
     assertThat(result).isEmpty();
 
@@ -109,7 +104,6 @@ class CardAttackRelationProcessorTest {
 
   @Test
   void process_shouldProcessSingleAttackDTO_whenListContainsOneItem() {
-    // Arrange
     List<AttackDTO> attackDTOs = Collections.singletonList(attackDTO);
     List<Attack> mappedAttacks = Collections.singletonList(mappedAttack);
 
@@ -117,10 +111,8 @@ class CardAttackRelationProcessorTest {
     when(attackService.getByNameAndDamageAndConvertedEnegyCostAndText(mappedAttack)).thenReturn(foundAttack);
     when(cardAttackMapper.toEntity(foundAttack, card)).thenReturn(cardAttack);
 
-    // Act
     List<CardAttack> result = processor.process(attackDTOs, card);
 
-    // Assert
     assertThat(result).isNotNull();
     assertThat(result).hasSize(1);
     assertThat(result.get(0)).isEqualTo(cardAttack);
@@ -134,7 +126,6 @@ class CardAttackRelationProcessorTest {
 
   @Test
   void process_shouldProcessMultipleAttackDTOs_whenListContainsMultipleItems() {
-    // Arrange
     AttackDTO attackDTO2 = AttackDTOMock.createMockAttackDTO(
         "Quick Attack",
         Arrays.asList("Lightning", "Colorless"),
@@ -167,10 +158,8 @@ class CardAttackRelationProcessorTest {
     when(cardAttackMapper.toEntity(foundAttack, card)).thenReturn(cardAttack);
     when(cardAttackMapper.toEntity(foundAttack2, card)).thenReturn(cardAttack2);
 
-    // Act
     List<CardAttack> result = processor.process(attackDTOs, card);
 
-    // Assert
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2);
     assertThat(result.get(0).getAttack().getName()).isEqualTo("Thunderbolt");
@@ -183,18 +172,14 @@ class CardAttackRelationProcessorTest {
 
   @Test
   void process_shouldSkipNull_whenCardAttackMapperReturnsNull() {
-    // Arrange
     List<AttackDTO> attackDTOs = Collections.singletonList(attackDTO);
     List<Attack> mappedAttacks = Collections.singletonList(mappedAttack);
 
     when(attackMapper.toListEntity(attackDTOs)).thenReturn(mappedAttacks);
     when(attackService.getByNameAndDamageAndConvertedEnegyCostAndText(mappedAttack)).thenReturn(foundAttack);
-    when(cardAttackMapper.toEntity(foundAttack, card)).thenReturn(null); // Retourne null
 
-    // Act
     List<CardAttack> result = processor.process(attackDTOs, card);
 
-    // Assert
     assertThat(result).isNotNull();
     assertThat(result).isEmpty();
 

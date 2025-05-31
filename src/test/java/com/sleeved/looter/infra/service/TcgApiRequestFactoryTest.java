@@ -18,16 +18,13 @@ public class TcgApiRequestFactoryTest {
   @BeforeEach
   void setUp() {
     tcgApiRequestFactory = new TcgApiRequestFactory();
-    // Injecter la valeur du apiKey manuellement pour le test
     ReflectionTestUtils.setField(tcgApiRequestFactory, "apiKey", TEST_API_KEY);
   }
 
   @Test
   void createAuthorizedRequest_shouldReturnEntityWithAuthorizationHeader() {
-    // When
     HttpEntity<String> request = tcgApiRequestFactory.createAuthorizedRequest();
 
-    // Then
     assertThat(request).isNotNull();
 
     HttpHeaders headers = request.getHeaders();

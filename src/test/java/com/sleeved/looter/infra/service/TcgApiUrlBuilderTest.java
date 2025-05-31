@@ -12,7 +12,6 @@ public class TcgApiUrlBuilderTest {
 
   private TcgApiUrlBuilder tcgApiUrlBuilder;
 
-  // Valeurs de test
   private final String TEST_PROTOCOLE = "https";
   private final String TEST_DOMAIN = "api.tcgplayer.com";
   private final String TEST_BASE_URL = "v2";
@@ -21,7 +20,6 @@ public class TcgApiUrlBuilderTest {
   void setUp() {
     tcgApiUrlBuilder = new TcgApiUrlBuilder();
 
-    // Injecter les valeurs de test manuellement
     ReflectionTestUtils.setField(tcgApiUrlBuilder, "apiProtocole", TEST_PROTOCOLE);
     ReflectionTestUtils.setField(tcgApiUrlBuilder, "apiDomain", TEST_DOMAIN);
     ReflectionTestUtils.setField(tcgApiUrlBuilder, "apiBaseUrl", TEST_BASE_URL);
@@ -29,16 +27,13 @@ public class TcgApiUrlBuilderTest {
 
   @Test
   void buildUrl_shouldConstructCompleteUrl() {
-    // Given
     String endpoint = "endpoint/test";
     String expectedTcgPlayerUrl = String.format(Constantes.API_URL_FORMAT, TEST_PROTOCOLE, TEST_DOMAIN);
     String expectedUrl = String.format(Constantes.TCG_API_URL_BASE_FORMAT, expectedTcgPlayerUrl, TEST_BASE_URL,
         endpoint);
 
-    // When
     String actualUrl = tcgApiUrlBuilder.buildUrl(endpoint);
 
-    // Then
     assertThat(actualUrl)
         .as("Le buildUrl devrait construire l'URL complète correctement")
         .isEqualTo(expectedUrl);
@@ -46,7 +41,6 @@ public class TcgApiUrlBuilderTest {
 
   @Test
   void buildPaginatedUrl_shouldFormatEndpointAndBuildUrl() {
-    // Given
     String endpoint = "endpoint/products?page=%d&pageSize=%d";
     int page = 2;
     int pageSize = 100;
@@ -56,10 +50,8 @@ public class TcgApiUrlBuilderTest {
     String expectedUrl = String.format(Constantes.TCG_API_URL_BASE_FORMAT, expectedTcgPlayerUrl, TEST_BASE_URL,
         formattedEndpoint);
 
-    // When
     String actualUrl = tcgApiUrlBuilder.buildPaginatedUrl(endpoint, page, pageSize);
 
-    // Then
     assertThat(actualUrl)
         .as("Le buildPaginatedUrl devrait formater les paramètres de pagination correctement")
         .isEqualTo(expectedUrl)

@@ -18,17 +18,13 @@ import com.sleeved.looter.batch.processor.CardDTOToCardProcessor;
 import com.sleeved.looter.batch.processor.CardDTOToCostAttackCardProcessor;
 import com.sleeved.looter.batch.processor.CardDTOToLinkCardRelationsProcessor;
 import com.sleeved.looter.batch.processor.CardDTOToSetsWeaknessResistanceCardProcessor;
-import com.sleeved.looter.batch.processor.PersonItemProcessor;
-import com.sleeved.looter.batch.reader.PersonItemReader;
 import com.sleeved.looter.batch.reader.StagingCardToCardDTOReader;
 import com.sleeved.looter.batch.tasklet.FetchAndStageCardsTasklet;
 import com.sleeved.looter.batch.writer.BaseEntityWriter;
 import com.sleeved.looter.batch.writer.CardWriter;
 import com.sleeved.looter.batch.writer.CostAttackWriter;
 import com.sleeved.looter.batch.writer.LinkCardRelationsWriter;
-import com.sleeved.looter.batch.writer.PersonItemWriter;
 import com.sleeved.looter.batch.writer.SetsWeaknessResistanceWriter;
-import com.sleeved.looter.domain.entity.Person;
 import com.sleeved.looter.infra.dto.BaseCardEntitiesProcessedDTO;
 import com.sleeved.looter.infra.dto.CardDTO;
 import com.sleeved.looter.infra.dto.CardEntitiesProcessedDTO;
@@ -166,20 +162,4 @@ public class BatchConfig {
         .writer(writer)
         .build();
   }
-
-  @Bean
-  public Step stepExemple(
-      JobRepository jobRepository,
-      PlatformTransactionManager transactionManager,
-      PersonItemReader reader,
-      PersonItemProcessor processor,
-      PersonItemWriter writer) {
-    return new StepBuilder("stepExemple", jobRepository)
-        .<Person, Person>chunk(chunkSize, transactionManager)
-        .reader(reader)
-        .processor(processor)
-        .writer(writer)
-        .build();
-  }
-
 }

@@ -34,9 +34,6 @@ public class AtlasDatasourceConfig {
   public LocalContainerEntityManagerFactoryBean atlasEntityManagerFactory(
       EntityManagerFactoryBuilder builder, @Qualifier("atlasDataSource") DataSource dataSource) {
 
-    // Ne pas utiliser hibernate.hbm2ddl.auto=update sur la base de données de
-    // production
-
     return builder
         .dataSource(dataSource)
         .packages("com.sleeved.looter.domain.entity.atlas")

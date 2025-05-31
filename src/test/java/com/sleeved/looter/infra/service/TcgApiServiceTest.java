@@ -52,7 +52,6 @@ public class TcgApiServiceTest {
   void setUp() {
     when(restTemplateBuilder.build()).thenReturn(restTemplate);
 
-    // Créer manuellement l'instance de service
     tcgApiService = new TcgApiService(
         restTemplateBuilder,
         looterScrapingErrorHandler,
@@ -61,7 +60,6 @@ public class TcgApiServiceTest {
 
     tcgApiService = spy(tcgApiService);
 
-    // Initialiser les attributs avec des valeurs de test via ReflectionTestUtils
     ReflectionTestUtils.setField(tcgApiService, "apiCardPaginateEndpoint", "/cards");
     ReflectionTestUtils.setField(tcgApiService, "apiCardPageSize", 10);
     ReflectionTestUtils.setField(tcgApiService, "apiCardPage", 1);
@@ -69,7 +67,6 @@ public class TcgApiServiceTest {
 
   @Test
   void fetchCardPage_shouldReturnJsonNodeData() {
-    // Given
     String apiUrl = "https://api.tcgplayer.com/cards?page=1&pageSize=10";
     HttpEntity<String> httpEntity = new HttpEntity<>(null, null);
     JsonNode mockResponse = TcgApiResponseMock.createMockCardPage(5);
@@ -83,10 +80,8 @@ public class TcgApiServiceTest {
         eq(httpEntity),
         eq(JsonNode.class))).thenReturn(responseEntity);
 
-    // When
     JsonNode result = tcgApiService.fetchCardPage(1);
 
-    // Then
     assertThat(result).isNotNull();
     assertThat(result).isSameAs(mockResponse);
     verify(tcgApiUrlBuilder).buildPaginatedUrl(anyString(), eq(1), anyInt());
@@ -95,30 +90,24 @@ public class TcgApiServiceTest {
 
   @Test
   void fetchAllCards_shouldReturnListOfCards() {
-    // Given
     JsonNode page1 = TcgApiResponseMock.createMockCardPage(10);
     JsonNode page2 = TcgApiResponseMock.createMockCardPage(10);
 
     doReturn(page1).when(tcgApiService).fetchCardPage(1);
     doReturn(page2).when(tcgApiService).fetchCardPage(2);
 
-    // When
     List<JsonNode> result = tcgApiService.fetchAllCards();
 
-    // Then
     assertThat(result).hasSize(20);
     verify(tcgApiService, times(2)).fetchCardPage(anyInt());
   }
 
   @Test
   void fetchAllCards_shouldHandleExceptions() {
-    // Given
     doReturn(null).when(tcgApiService).fetchCardPage(anyInt());
 
-    // When
     List<JsonNode> result = tcgApiService.fetchAllCards();
 
-    // Then
     assertThat(result).isEmpty();
     verify(looterScrapingErrorHandler).handle(
         any(Exception.class),
