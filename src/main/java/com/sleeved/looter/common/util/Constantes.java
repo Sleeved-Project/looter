@@ -17,6 +17,9 @@ public class Constantes {
   public static final String CARD_ENTITIES_WRITER_CONTEXT = "CARD ENTITIES WRITER";
   public static final String CARD_DTO_TO_LINK_CARD_RELATIONS_ENTITIES_PROCESSOR_CONTEXT = "CARD DTO TO LINK CARD RELATIONS ENTITIES PROCESSOR";
   public static final String LINK_CARD_RELATIONS_ENTITIES_WRITER_CONTEXT = "LINK CARD RELATIONS ENTITIES WRITER";
+  public static final String STAGING_CARD_PRICE_READER_CONTEXT = "STAGING CARD PRICE READER";
+  public static final String CARD_DTO_TO_REPORTING_PRICE_ENTITY_PROCESSOR_CONTEXT = "CARD DTO TO REPORTING PRICE ENTITY PROCESSOR";
+  public static final String REPORTING_PRICE_ENTITIES_WRITER_CONTEXT = "REPORTING PRICE ENTITIES WRITER";
   // Error action
   public static final String CREATE_ACTION = "CREATE";
   public static final String UPDATE_ACTION = "UPDATE";
@@ -36,6 +39,8 @@ public class Constantes {
   public static final String CARD_ENTITIES_ITEM = "CARD ENTITIES";
   public static final String LINK_CARD_RELATIONS_ENTITIES_ITEM = "LINK_CARD_RELATIONS ENTITIES";
   public static final String STAGING_CARD_PRICE_ITEM = "STAGING CARD PRICE";
+  public static final String CARD_PRICE_DTO_ITEM = "CARD PRICE DTO";
+  public static final String REPORTING_PRICE_ITEM = "REPORTING PRICE";
   // Logger formating
   public static final String LINE_BREAK = "\n";
   public static final String SPACE = "";

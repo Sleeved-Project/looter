@@ -21,7 +21,11 @@
       "id": "jobName",
       "type": "pickString",
       "description": "What job do you want to run ?",
-      "options": ["scrapingCardJob", "scrapingPriceJob"],
+      "options": [
+        "scrapingCardJob",
+        "scrapingPriceJob",
+        "scrapingPriceJobWithoutApi"
+      ],
       "default": "scrapingCardJob"
     }
   ]
