@@ -20,6 +20,8 @@ public class Constantes {
   public static final String STAGING_CARD_PRICE_READER_CONTEXT = "STAGING CARD PRICE READER";
   public static final String CARD_DTO_TO_REPORTING_PRICE_ENTITY_PROCESSOR_CONTEXT = "CARD DTO TO REPORTING PRICE ENTITY PROCESSOR";
   public static final String REPORTING_PRICE_ENTITIES_WRITER_CONTEXT = "REPORTING PRICE ENTITIES WRITER";
+  public static final String CARD_DTO_TO_TCG_PLAYER_PRICE_ENTITY_PROCESSOR_CONTEXT = "CARD DTO TO TCG PLAYER PRICE ENTITY PROCESSOR";
+  public static final String TCGP_PLAYER_PRICE_CARD_ENTITIES_WRITER_CONTEXT = "TCGP PLAYER PRICE CARD ENTITIES WRITER";
   // Error action
   public static final String CREATE_ACTION = "CREATE";
   public static final String UPDATE_ACTION = "UPDATE";
@@ -41,6 +43,7 @@ public class Constantes {
   public static final String STAGING_CARD_PRICE_ITEM = "STAGING CARD PRICE";
   public static final String CARD_PRICE_DTO_ITEM = "CARD PRICE DTO";
   public static final String REPORTING_PRICE_ITEM = "REPORTING PRICE";
+  public static final String TCGP_PLAYER_PRICE_CARD_ENTITIES_ITEM = "TCGP PLAYER PRICE CARD";
   // Logger formating
   public static final String LINE_BREAK = "\n";
   public static final String SPACE = "";
