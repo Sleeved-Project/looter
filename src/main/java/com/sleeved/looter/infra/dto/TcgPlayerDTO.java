@@ -8,5 +8,5 @@ import lombok.Data;
 public class TcgPlayerDTO {
   private String url;
   private String updatedAt;
-  private Map<String, PriceDTO> prices;
+  private Map<String, TcgPlayerPriceDTO> prices;
 }
