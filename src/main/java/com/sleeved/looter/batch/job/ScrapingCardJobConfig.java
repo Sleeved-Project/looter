@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.sleeved.looter.batch.listener.ImportScrappingListener;
+import com.sleeved.looter.batch.listener.ScrapingCardListener;
 import com.sleeved.looter.batch.processor.CardDTOToBaseEntityCardProcessor;
 import com.sleeved.looter.batch.processor.CardDTOToCardProcessor;
 import com.sleeved.looter.batch.processor.CardDTOToCostAttackCardProcessor;
@@ -33,20 +33,20 @@ import com.sleeved.looter.infra.dto.LinkCardRelationsEntitiesProcessedDTO;
 import com.sleeved.looter.infra.dto.SetsWeaknessResistanceCardEntitiesProcessedDTO;
 
 @Configuration
-public class ImportScrapingJobConfig {
+public class ScrapingCardJobConfig {
   @Value("${looter.batch.chunksize:1}")
   private Integer chunkSize;
 
   @Autowired
-  private ImportScrappingListener importScrappingListener;
+  private ScrapingCardListener scrapingCardListener;
 
   @Bean
-  public Job importScrapingJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep,
+  public Job scrapingCardJob(JobRepository jobRepository, Step fetchCardsStageStep, Step importBaseEntitiesStep,
       Step importSetsWeaknessResitanceStep, Step importCostAttackStep, Step importCardsStep,
       Step linkCardRelationsStep) {
-    return new JobBuilder("importScrapingJob", jobRepository)
+    return new JobBuilder("scrapingCardJob", jobRepository)
         .incrementer(new RunIdIncrementer())
-        .listener(importScrappingListener)
+        .listener(scrapingCardListener)
         .start(fetchCardsStageStep)
         .next(importBaseEntitiesStep)
         .next(importSetsWeaknessResitanceStep)
@@ -62,7 +62,7 @@ public class ImportScrapingJobConfig {
       PlatformTransactionManager transactionManager,
       FetchAndStageCardsTasklet fetchAndStageCardsTasklet) {
     return new StepBuilder("fetchCardsStageStep", jobRepository)
-        .listener(importScrappingListener)
+        .listener(scrapingCardListener)
         .tasklet(fetchAndStageCardsTasklet, transactionManager)
         .build();
   }
@@ -76,7 +76,7 @@ public class ImportScrapingJobConfig {
       BaseEntityWriter writer) {
     return new StepBuilder("importBaseEntitiesStep", jobRepository)
         .<CardDTO, BaseCardEntitiesProcessedDTO>chunk(chunkSize, transactionManager)
-        .listener(importScrappingListener)
+        .listener(scrapingCardListener)
         .reader(reader)
         .processor(processor)
         .writer(writer)
@@ -92,7 +92,7 @@ public class ImportScrapingJobConfig {
       SetsWeaknessResistanceWriter writer) {
     return new StepBuilder("importSetsWeaknessResitanceStep", jobRepository)
         .<CardDTO, SetsWeaknessResistanceCardEntitiesProcessedDTO>chunk(chunkSize, transactionManager)
-        .listener(importScrappingListener)
+        .listener(scrapingCardListener)
         .reader(reader)
         .processor(processor)
         .writer(writer)
@@ -108,7 +108,7 @@ public class ImportScrapingJobConfig {
       CostAttackWriter writer) {
     return new StepBuilder("importCostAttackStep", jobRepository)
         .<CardDTO, CostAttackEntitiesProcessedDTO>chunk(chunkSize, transactionManager)
-        .listener(importScrappingListener)
+        .listener(scrapingCardListener)
         .reader(reader)
         .processor(processor)
         .writer(writer)
@@ -124,7 +124,7 @@ public class ImportScrapingJobConfig {
       CardWriter writer) {
     return new StepBuilder("importCardsStep", jobRepository)
         .<CardDTO, CardEntitiesProcessedDTO>chunk(chunkSize, transactionManager)
-        .listener(importScrappingListener)
+        .listener(scrapingCardListener)
         .reader(reader)
         .processor(processor)
         .writer(writer)
@@ -140,7 +140,7 @@ public class ImportScrapingJobConfig {
       LinkCardRelationsWriter writer) {
     return new StepBuilder("linkCardRelationsStep", jobRepository)
         .<CardDTO, LinkCardRelationsEntitiesProcessedDTO>chunk(chunkSize, transactionManager)
-        .listener(importScrappingListener)
+        .listener(scrapingCardListener)
         .reader(reader)
         .processor(processor)
         .writer(writer)

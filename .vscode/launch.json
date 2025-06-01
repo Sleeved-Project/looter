@@ -21,8 +21,8 @@
       "id": "jobName",
       "type": "pickString",
       "description": "What job do you want to run ?",
-      "options": ["importPersonJob", "importScrapingJob"],
-      "default": "importScrapingJob"
+      "options": ["scrapingCardJob", "scrapingPriceJob"],
+      "default": "scrapingCardJob"
     }
   ]
 }

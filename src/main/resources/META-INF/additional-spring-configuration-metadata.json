@@ -71,6 +71,11 @@
       "description": "Pagination endpoint format for TCGPlayer cards API"
     },
     {
+      "name": "tcgplayer.api.endpoints.cards.paginate-prices",
+      "type": "java.lang.String",
+      "description": "Pagination endpoint format for TCGPlayer card prices API"
+    },
+    {
       "name": "tcgplayer.api.endpoints.cards.pagesize",
       "type": "java.lang.Integer",
       "description": "Page size for TCGPlayer cards API"
