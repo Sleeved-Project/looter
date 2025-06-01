@@ -35,6 +35,7 @@ public class Constantes {
   public static final String COST_ATTACK_CARD_ENTITIES_ITEM = "COST ATTACK CARD ENTITIES";
   public static final String CARD_ENTITIES_ITEM = "CARD ENTITIES";
   public static final String LINK_CARD_RELATIONS_ENTITIES_ITEM = "LINK_CARD_RELATIONS ENTITIES";
+  public static final String STAGING_CARD_PRICE_ITEM = "STAGING CARD PRICE";
   // Logger formating
   public static final String LINE_BREAK = "\n";
   public static final String SPACE = "";

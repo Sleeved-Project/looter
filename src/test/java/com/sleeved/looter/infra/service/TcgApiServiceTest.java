@@ -60,7 +60,10 @@ public class TcgApiServiceTest {
 
     tcgApiService = spy(tcgApiService);
 
-    ReflectionTestUtils.setField(tcgApiService, "apiCardPaginateEndpoint", "/cards");
+    ReflectionTestUtils.setField(tcgApiService, "apiCardPaginateEndpoint",
+        "/cards?page=%d&pageSize=%d&orderBy=set.releaseDate");
+    ReflectionTestUtils.setField(tcgApiService, "apiCardPaginatePricesEndpoint",
+        "/cards?page=%d&pageSize=%d&orderBy=set.releaseDate&select=id,name,tcgplayer,cardmarket");
     ReflectionTestUtils.setField(tcgApiService, "apiCardPageSize", 10);
     ReflectionTestUtils.setField(tcgApiService, "apiCardPage", 1);
   }
@@ -107,6 +110,57 @@ public class TcgApiServiceTest {
     doReturn(null).when(tcgApiService).fetchCardPage(anyInt());
 
     List<JsonNode> result = tcgApiService.fetchAllCards();
+
+    assertThat(result).isEmpty();
+    verify(looterScrapingErrorHandler).handle(
+        any(Exception.class),
+        eq(Constantes.SERVICE_CONTEXT),
+        eq(Constantes.FETCH_DATA_ACTION),
+        eq(Constantes.TCGAPI_CARD_PAGINATE_ITEM));
+  }
+
+  @Test
+  void fetchCardPricePage_shouldReturnJsonNodeData() {
+    String apiUrl = "https://api.tcgplayer.com/card?page=1&pageSize=10";
+    HttpEntity<String> httpEntity = new HttpEntity<>(null, null);
+    JsonNode mockResponse = TcgApiResponseMock.createMockCardPage(5);
+    ResponseEntity<JsonNode> responseEntity = ResponseEntity.ok(mockResponse);
+
+    when(tcgApiUrlBuilder.buildPaginatedUrl(anyString(), anyInt(), anyInt())).thenReturn(apiUrl);
+    when(tcgApiRequestFactory.createAuthorizedRequest()).thenReturn(httpEntity);
+    when(restTemplate.exchange(
+        eq(apiUrl),
+        eq(HttpMethod.GET),
+        eq(httpEntity),
+        eq(JsonNode.class))).thenReturn(responseEntity);
+
+    JsonNode result = tcgApiService.fetchCardPricePage(1);
+
+    assertThat(result).isNotNull();
+    assertThat(result).isSameAs(mockResponse);
+    verify(tcgApiUrlBuilder).buildPaginatedUrl(anyString(), eq(1), anyInt());
+    verify(tcgApiRequestFactory).createAuthorizedRequest();
+  }
+
+  @Test
+  void fetchAllCardPrices_shouldReturnListOfCardPrices() {
+    JsonNode page1 = TcgApiResponseMock.createMockCardPage(10);
+    JsonNode page2 = TcgApiResponseMock.createMockCardPage(10);
+
+    doReturn(page1).when(tcgApiService).fetchCardPricePage(1);
+    doReturn(page2).when(tcgApiService).fetchCardPricePage(2);
+
+    List<JsonNode> result = tcgApiService.fetchAllCardPrices();
+
+    assertThat(result).hasSize(20);
+    verify(tcgApiService, times(2)).fetchCardPricePage(anyInt());
+  }
+
+  @Test
+  void fetchAllCardPrices_shouldHandleExceptions() {
+    doReturn(null).when(tcgApiService).fetchCardPricePage(anyInt());
+
+    List<JsonNode> result = tcgApiService.fetchAllCardPrices();
 
     assertThat(result).isEmpty();
     verify(looterScrapingErrorHandler).handle(

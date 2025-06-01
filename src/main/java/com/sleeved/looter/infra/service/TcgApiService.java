@@ -26,6 +26,8 @@ public class TcgApiService {
 
   @Value("${tcgplayer.api.endpoints.cards.paginate}")
   private String apiCardPaginateEndpoint;
+  @Value("${tcgplayer.api.endpoints.cards.paginate-prices}")
+  private String apiCardPaginatePricesEndpoint;
   @Value("${tcgplayer.api.endpoints.cards.pagesize}")
   private int apiCardPageSize;
   @Value("${tcgplayer.api.endpoints.cards.page}")
@@ -78,9 +80,58 @@ public class TcgApiService {
     return allCards;
   }
 
+  public List<JsonNode> fetchAllCardPrices() {
+    int page = apiCardPage;
+    List<JsonNode> allCardPrices = new ArrayList<>();
+
+    while (true) {
+      try {
+
+        JsonNode root = fetchCardPricePage(page);
+        if (root == null || !root.has("data") || !root.get("data").isArray()) {
+          throw new RuntimeException("No data found or invalid response");
+        }
+
+        JsonNode cardPrices = root.get("data");
+        if (!cardPrices.isArray() || cardPrices.size() == 0) {
+          log.info("No more cards to fetch or invalid response format");
+          break;
+        }
+
+        for (JsonNode cardPrice : cardPrices) {
+          allCardPrices.add(cardPrice);
+        }
+
+        int total = root.path("totalCount").asInt();
+        if (page * apiCardPageSize >= total) {
+          log.info("All cards fetched");
+          break;
+        }
+
+        page++;
+      } catch (Exception e) {
+        looterScrapingErrorHandler.handle(e, Constantes.SERVICE_CONTEXT, Constantes.FETCH_DATA_ACTION,
+            Constantes.TCGAPI_CARD_PAGINATE_ITEM);
+        break;
+      }
+    }
+
+    return allCardPrices;
+  }
+
   protected JsonNode fetchCardPage(int page) {
     String apiUrl = tcgApiUrlBuilder.buildPaginatedUrl(apiCardPaginateEndpoint, page, apiCardPageSize);
     log.info("Fetching cards from TCG API: {}", apiUrl);
+    ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET,
+        tcgApiRequestFactory.createAuthorizedRequest(),
+        JsonNode.class);
+    log.info("Response status code: {}", response.getStatusCode());
+    return response.getBody();
+  }
+
+  protected JsonNode fetchCardPricePage(int page) {
+    String apiUrl = tcgApiUrlBuilder.buildPaginatedUrl(apiCardPaginatePricesEndpoint, page, apiCardPageSize);
+    log.info("Fetching card prices from TCG API: {}", apiUrl);
     ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET,
         tcgApiRequestFactory.createAuthorizedRequest(),
         JsonNode.class);

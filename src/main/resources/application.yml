@@ -51,5 +51,6 @@ tcgplayer:
     endpoints:
       cards:
         paginate: cards?page=%d&pageSize=%d&orderBy=set.releaseDate
+        paginate-prices: cards?page=%d&pageSize=%d&orderBy=set.releaseDate&select=id,name,tcgplayer,cardmarket
         pagesize: 200
         page: 1

@@ -13,18 +13,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class ImportScrappingListener implements JobExecutionListener, StepExecutionListener {
+public class ScrapingCardListener implements JobExecutionListener, StepExecutionListener {
 
   @Override
   public void beforeJob(JobExecution jobExecution) {
 
-    log.info("---------------------- IMPORT SCRAPPING START ----------------------");
+    log.info("---------------------- SCRAPING CARD START ----------------------");
     log.info("Job: Starting {}...\n", jobExecution.getJobInstance().getJobName());
   }
 
   @Override
   public void afterJob(JobExecution jobExecution) {
-    log.info("--------------------- IMPORT SCRAPPING REPPORT ---------------------");
+    log.info("--------------------- SCRAPING CARD REPPORT ---------------------");
     log.info("Job status: {}\n", jobExecution.getStatus());
 
     for (StepExecution stepExecution : jobExecution.getStepExecutions()) {
