@@ -34,9 +34,9 @@ public class TcgPlayerPricesEntityWriter implements ItemWriter<TcgPlayerPricesEn
         }
       } catch (Exception e) {
         String formatedItem = looterScrapingErrorHandler.formatErrorItem(
-            Constantes.TCGP_PLAYER_PRICE_CARD_ENTITIES_ITEM,
+            Constantes.TCG_PLAYER_PRICE_CARD_ENTITIES_ITEM,
             tcgPlayerPricesEntities.toString());
-        looterScrapingErrorHandler.handle(e, Constantes.TCGP_PLAYER_PRICE_CARD_ENTITIES_WRITER_CONTEXT,
+        looterScrapingErrorHandler.handle(e, Constantes.TCG_PLAYER_PRICE_CARD_ENTITIES_WRITER_CONTEXT,
             Constantes.WRITE_ACTION,
             formatedItem);
       }

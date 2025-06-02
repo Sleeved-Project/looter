@@ -244,7 +244,7 @@ class CardPriceDTOToTcgPlayerPricesEntityCardProcessorTest {
         eq(cardPriceDTO.toString()));
     verify(looterScrapingErrorHandler).handle(
         eq(exception),
-        eq(Constantes.CARD_DTO_TO_REPORTING_PRICE_ENTITY_PROCESSOR_CONTEXT),
+        eq(Constantes.CARD_DTO_TO_TCG_PLAYER_PRICE_ENTITY_PROCESSOR_CONTEXT),
         eq(Constantes.PROCESSOR_ACTION),
         anyString());
   }
@@ -274,7 +274,7 @@ class CardPriceDTOToTcgPlayerPricesEntityCardProcessorTest {
     verify(tcgPlayerPriceProcessor, never()).processFromDTOs(any(), any());
     verify(looterScrapingErrorHandler).handle(
         any(Exception.class),
-        eq(Constantes.CARD_DTO_TO_REPORTING_PRICE_ENTITY_PROCESSOR_CONTEXT),
+        eq(Constantes.CARD_DTO_TO_TCG_PLAYER_PRICE_ENTITY_PROCESSOR_CONTEXT),
         eq(Constantes.PROCESSOR_ACTION),
         anyString());
   }

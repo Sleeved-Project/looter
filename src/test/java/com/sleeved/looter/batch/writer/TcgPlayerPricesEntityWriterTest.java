@@ -174,12 +174,12 @@ class TcgPlayerPricesEntityWriterTest {
     writer.write(chunk);
 
     verify(looterScrapingErrorHandler).formatErrorItem(
-        eq(Constantes.SETS_WEAKNESS_RESISTANCE_CARD_ENTITIES_ITEM),
+        eq(Constantes.TCG_PLAYER_PRICE_CARD_ENTITIES_ITEM),
         anyString());
 
     verify(looterScrapingErrorHandler).handle(
         eq(serviceException),
-        eq(Constantes.SETS_WEAKNESS_RESISTANCE_ENTITIES_WRITER_CONTEXT),
+        eq(Constantes.TCG_PLAYER_PRICE_CARD_ENTITIES_WRITER_CONTEXT),
         eq(Constantes.WRITE_ACTION),
         anyString());
 
@@ -197,7 +197,7 @@ class TcgPlayerPricesEntityWriterTest {
     writer.write(chunk);
 
     verify(looterScrapingErrorHandler).formatErrorItem(
-        eq(Constantes.SETS_WEAKNESS_RESISTANCE_CARD_ENTITIES_ITEM),
+        eq(Constantes.TCG_PLAYER_PRICE_CARD_ENTITIES_ITEM),
         anyString());
 
     verifyNoMoreInteractions(tcgPlayerPriceService);
@@ -234,12 +234,12 @@ class TcgPlayerPricesEntityWriterTest {
     writer.write(chunk);
 
     verify(looterScrapingErrorHandler).formatErrorItem(
-        eq(Constantes.SETS_WEAKNESS_RESISTANCE_CARD_ENTITIES_ITEM),
+        eq(Constantes.TCG_PLAYER_PRICE_CARD_ENTITIES_ITEM),
         anyString());
 
     verify(looterScrapingErrorHandler).handle(
         eq(serviceException),
-        eq(Constantes.SETS_WEAKNESS_RESISTANCE_ENTITIES_WRITER_CONTEXT),
+        eq(Constantes.TCG_PLAYER_PRICE_CARD_ENTITIES_WRITER_CONTEXT),
         eq(Constantes.WRITE_ACTION),
         anyString());
   }
