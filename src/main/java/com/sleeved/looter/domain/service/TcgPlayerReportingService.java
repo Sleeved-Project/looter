@@ -19,4 +19,13 @@ public class TcgPlayerReportingService {
         tcgPlayerReportingPrice.getUpdatedAt(), tcgPlayerReportingPrice.getCard())
         .orElseGet(() -> tcgPlayerReportingRepository.save(tcgPlayerReportingPrice));
   }
+
+  public TcgPlayerReporting getByUpdatedAtAndCard(TcgPlayerReporting tcgPlayerReportingPrice) {
+    return tcgPlayerReportingRepository.findByUpdatedAtAndCard(
+        tcgPlayerReportingPrice.getUpdatedAt(),
+        tcgPlayerReportingPrice.getCard())
+        .orElseThrow(() -> new RuntimeException(
+            "TcgPlayerReporting not found for updated at: " + tcgPlayerReportingPrice.getUpdatedAt() + ", card: "
+                + tcgPlayerReportingPrice.getCard()));
+  }
 }

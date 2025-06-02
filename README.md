@@ -28,9 +28,9 @@ Un fichier dump est disponible pour initialiser la base sleeved_db, y compris so
 
 🔗 Télécharger les dump des base
 
-- [sleeved_db_v1.sql](https://drive.google.com/file/d/1nXXpMkDlnbhaw-m4T0ovjEp1evoT20-0/view?usp=sharing)
+- [sleeved_db_v3.sql](https://drive.google.com/file/d/1JPXGYp308fYhBvJJmZvCB3qOYIL1mZN1/view?usp=drive_link)
 - [looter_scrap_db_v1.sql](https://drive.google.com/file/d/1HhoiVYRUHn_G675nqpZW4p_o5A1IpXDY/view?usp=drive_link)
-- [looter_staging_db_v1.sql](https://drive.google.com/file/d/1B19d7DsSOqzCbThkF1eNNbbTYKx-oHh9/view?usp=drive_link)
+- [looter_staging_db_v2.sql](https://drive.google.com/file/d/1xX1Vwr96aI_7UIxpcD8b6kPvE96CsRjr/view?usp=drive_link)
 
 📥 Importer les base grace à cette commande
 
