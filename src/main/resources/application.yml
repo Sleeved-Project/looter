@@ -18,6 +18,9 @@ spring:
     jdbc:
       initialize-schema: never
 
+server:
+  port: 5001
+
 logging:
   level:
     com:
