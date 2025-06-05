@@ -22,6 +22,7 @@ public class Constantes {
   public static final String REPORTING_PRICE_ENTITIES_WRITER_CONTEXT = "REPORTING PRICE ENTITIES WRITER";
   public static final String CARD_DTO_TO_TCG_PLAYER_PRICE_ENTITY_PROCESSOR_CONTEXT = "CARD DTO TO TCG PLAYER PRICE ENTITY PROCESSOR";
   public static final String TCG_PLAYER_PRICE_CARD_ENTITIES_WRITER_CONTEXT = "TCGP PLAYER PRICE CARD ENTITIES WRITER";
+  public static final String CARD_IMAGE_READER_CONTEXT = "CARD IMAGE READER";
   // Error action
   public static final String CREATE_ACTION = "CREATE";
   public static final String UPDATE_ACTION = "UPDATE";
