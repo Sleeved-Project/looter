@@ -32,6 +32,9 @@ public class CardToCardImageDTOReaderTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
+
+        // Mock the error handler to do nothing on handle calls
+        doNothing().when(looterScrapingErrorHandler).handle(any(), anyString(), anyString(), anyString());
         
         Card card1 = new Card();
         card1.setId("card-1");
@@ -66,9 +69,6 @@ public class CardToCardImageDTOReaderTest {
         
         CardImageDTO thirdResult = reader.read();
         assertNull(thirdResult);
-        
-        CardImageDTO fourthResult = reader.read();
-        assertNull(fourthResult);
     }
     
     /**

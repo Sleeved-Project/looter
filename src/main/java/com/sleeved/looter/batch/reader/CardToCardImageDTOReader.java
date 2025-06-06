@@ -58,8 +58,8 @@ public class CardToCardImageDTOReader implements ItemReader<CardImageDTO> {
             log.warn("Reader initialization failed, returning null");
             return null;
         }
-        
-        if (cardIterator.hasNext()) {
+
+        while (cardIterator.hasNext()) {
             Card card = cardIterator.next();
             try {
                 if (card.getImageLarge() != null && !card.getImageLarge().isEmpty()) {
@@ -70,11 +70,12 @@ public class CardToCardImageDTOReader implements ItemReader<CardImageDTO> {
                     log.debug("Reading card image for card ID: {}", card.getId());
                     return imageDTO;
                 }
-                return null;
+                log.debug("Skipping card ID {} with no image URL", card.getId());
+                continue;
             } catch (Exception e) {
                 looterScrapingErrorHandler.handle(e, Constantes.CARD_IMAGE_READER_CONTEXT, Constantes.READER_ACTION,
                         "Card ID: " + card.getId());
-                return null;
+                continue;
             }
         }
         log.info("No more cards to process");
