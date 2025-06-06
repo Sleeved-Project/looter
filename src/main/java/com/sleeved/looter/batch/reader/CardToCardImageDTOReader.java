@@ -25,26 +25,14 @@ public class CardToCardImageDTOReader implements ItemReader<CardImageDTO> {
     private Iterator<Card> cardIterator;
     private final CardRepository cardRepository;
     private final LooterScrapingErrorHandler looterScrapingErrorHandler;
-    private boolean initializationFailed = false;
 
     @Autowired
     public CardToCardImageDTOReader(CardRepository cardRepository, LooterScrapingErrorHandler looterScrapingErrorHandler) {
         this.cardRepository = cardRepository;
         this.looterScrapingErrorHandler = looterScrapingErrorHandler;
         
-        try {
-            log.info("Initializing CardImageReader");
-            List<Card> cards = this.cardRepository.findByImageLargeIsNotNull();
-            log.info("Found {} cards with images", cards.size());
-            this.cardIterator = cards.iterator();
-        } catch (Exception e) {
-            log.error("Failed to initialize CardImageReader", e);
-            this.looterScrapingErrorHandler.handle(e, Constantes.CARD_IMAGE_READER_CONTEXT, "INITIALIZATION",
-                    "Failed to load cards from repository");
-            this.initializationFailed = true;
-            this.cardIterator = Collections.<Card>emptyList().iterator();
-        }
-        
+        List<Card> cards = this.cardRepository.findByImageLargeIsNotNull();
+        this.cardIterator = cards.iterator();
     }
     
     /**
@@ -54,11 +42,6 @@ public class CardToCardImageDTOReader implements ItemReader<CardImageDTO> {
      */
     @Override
     public CardImageDTO read() {
-        if (initializationFailed) {
-            log.warn("Reader initialization failed, returning null");
-            return null;
-        }
-
         while (cardIterator.hasNext()) {
             Card card = cardIterator.next();
             try {
@@ -67,18 +50,18 @@ public class CardToCardImageDTOReader implements ItemReader<CardImageDTO> {
                     imageDTO.setCardId(card.getId());
                     imageDTO.setImageUrl(card.getImageLarge());
                     
-                    log.debug("Reading card image for card ID: {}", card.getId());
                     return imageDTO;
                 }
-                log.debug("Skipping card ID {} with no image URL", card.getId());
                 continue;
             } catch (Exception e) {
+                String formatedItem = looterScrapingErrorHandler.formatErrorItem(
+                    Constantes.CARD_IMAGE_ITEM,
+                    card.getId());
                 looterScrapingErrorHandler.handle(e, Constantes.CARD_IMAGE_READER_CONTEXT, Constantes.READER_ACTION,
-                        "Card ID: " + card.getId());
+                        formatedItem);
                 continue;
             }
         }
-        log.info("No more cards to process");
         return null;
     }
 }

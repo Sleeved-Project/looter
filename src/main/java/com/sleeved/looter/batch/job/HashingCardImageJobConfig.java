@@ -13,12 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.sleeved.looter.batch.listener.HashingImageListener;
+import com.sleeved.looter.batch.processor.CardImageDTOToHashImageDTOProcessor;
 import com.sleeved.looter.batch.reader.CardToCardImageDTOReader;
+import com.sleeved.looter.batch.writer.CardImageDTOToHashImageDTOWriter;
 import com.sleeved.looter.infra.dto.CardImageDTO;
 import com.sleeved.looter.infra.dto.HashImageDTO;
 
 @Configuration
-public class HashingImageJobConfig {
+public class HashingCardImageJobConfig {
     @Value("${looter.batch.chunksize:1}")
     private Integer chunkSize;
 
@@ -26,8 +28,8 @@ public class HashingImageJobConfig {
     private HashingImageListener hashingImageListener;
 
     @Bean
-    public Job hashingImageJob(JobRepository jobRepository, Step hashImagesStep) {
-        return new JobBuilder("hashingImageJob", jobRepository)
+    public Job hashingCardImageJob(JobRepository jobRepository, Step hashImagesStep) {
+        return new JobBuilder("hashingCardImageJob", jobRepository)
             .incrementer(new RunIdIncrementer())
             .listener(hashingImageListener)
             .start(hashImagesStep)
@@ -38,13 +40,16 @@ public class HashingImageJobConfig {
     public Step hashImagesStep(
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
-            CardToCardImageDTOReader cardToCardImageDTOReader) {
+            CardToCardImageDTOReader cardToCardImageDTOReader,
+            CardImageDTOToHashImageDTOProcessor processor,
+            CardImageDTOToHashImageDTOWriter writer
+            ) {
         return new StepBuilder("hashImagesStep", jobRepository)
             .<CardImageDTO, HashImageDTO>chunk(chunkSize, transactionManager)
-            .reader(cardToCardImageDTOReader)
-            // .processor()
-            // .writer()
             .listener(hashingImageListener)
+            .reader(cardToCardImageDTOReader)
+            .processor(processor)
+            .writer(writer)
             .build();
     }
 }

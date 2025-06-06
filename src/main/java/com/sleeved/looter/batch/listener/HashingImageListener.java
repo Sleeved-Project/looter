@@ -42,15 +42,7 @@ public class HashingImageListener implements JobExecutionListener, StepExecution
   }
 
   @Override
-  public void beforeStep(StepExecution stepExecution) {
-    log.info("Starting step: {}", stepExecution.getStepName());
-  }
-
-  @Override
   public ExitStatus afterStep(StepExecution stepExecution) {
-    log.info("Completed step: {} with status {}", 
-        stepExecution.getStepName(), 
-        stepExecution.getExitStatus().getExitCode());
     log.info(Constantes.SPACE);
     return stepExecution.getExitStatus();
   }
