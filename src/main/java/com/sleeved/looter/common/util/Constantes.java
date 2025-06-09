@@ -23,6 +23,9 @@ public class Constantes {
   public static final String CARD_DTO_TO_TCG_PLAYER_PRICE_ENTITY_PROCESSOR_CONTEXT = "CARD DTO TO TCG PLAYER PRICE ENTITY PROCESSOR";
   public static final String TCG_PLAYER_PRICE_CARD_ENTITIES_WRITER_CONTEXT = "TCGP PLAYER PRICE CARD ENTITIES WRITER";
   public static final String CARD_IMAGE_READER_CONTEXT = "CARD IMAGE READER";
+  public static final String CARD_IMAGE_TO_HASH_IMAGE_PROCESSOR_CONTEXT = "CARD IMAGE TO HASH IMAGE PROCESSOR";
+  public static final String HASH_SERVICE_CONTEXT = "HASH SERVICE";
+  public static final String HASH_IMAGE_FETCH_CONTEXT = "HASH IMAGE FETCH";
   // Error action
   public static final String CREATE_ACTION = "CREATE";
   public static final String UPDATE_ACTION = "UPDATE";
@@ -32,6 +35,7 @@ public class Constantes {
   public static final String READER_ACTION = "READ";
   public static final String PROCESSOR_ACTION = "PROCESS";
   public static final String WRITE_ACTION = "WRITE";
+  public static final String HASH_CALCULATION_ACTION = "CALCULATE HASH";
   // Error item
   public static final String STAGING_CARD_ITEM = "STAGING CARD";
   public static final String TCGAPI_CARD_PAGINATE_ITEM = "TCGAPI CARD PAGINATE";
@@ -46,6 +50,7 @@ public class Constantes {
   public static final String REPORTING_PRICE_ITEM = "REPORTING PRICE";
   public static final String TCG_PLAYER_PRICE_CARD_ENTITIES_ITEM = "TCGP PLAYER PRICE CARD";
   public static final String CARD_IMAGE_ITEM = "CARD IMAGE";
+  public static final String HASH_IMAGE_ITEM = "HASH IMAGE";
   // Logger formating
   public static final String LINE_BREAK = "\n";
   public static final String SPACE = "";
@@ -55,6 +60,8 @@ public class Constantes {
   public static final String API_URL_FORMAT = "%s://%s";
   // TcgPlayer API
   public static final String TCG_API_URL_BASE_FORMAT = "%s/%s/%s";
+  // Iris API
+  public static final String IRIS_API_URL_BASE_FORMAT = "%s/%s/%s";
   // Date formatting
   public static final String NOMALIZE_YEARS_ERROR_PATTERN = "^(\\d{1,3})/(\\d{1,2})/(\\d{1,2})\\s+(.*)$";
   public static final String STAGING_CARD_DATE_FORMAT = "yyyy/MM/dd";
