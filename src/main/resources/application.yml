@@ -44,6 +44,27 @@ atlas:
     password: ${SLEEVED_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+iris:
+  datasource:
+    jdbc-url: jdbc:mysql://localhost:3311/iris-db
+    username: ${IRIS_DB_USERNAME}
+    password: ${IRIS_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  api:
+    key: ${IRIS_API_KEY}
+    url:
+      protocole: http
+      domain: localhost:8083
+      base: api/v1
+      endpoint:
+        hash: images/hash/url
+    rateLimit:
+      enabled: true
+      delayMs: 500
+      maxRetries: 3
+      initialBackoffMs: 1000
+      maxRequestsPerMinute: 100
+
 tcgplayer:
   api:
     key: ${TCGPLAYER_API_KEY}
