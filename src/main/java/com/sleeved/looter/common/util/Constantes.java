@@ -49,8 +49,9 @@ public class Constantes {
   public static final String CARD_PRICE_DTO_ITEM = "CARD PRICE DTO";
   public static final String REPORTING_PRICE_ITEM = "REPORTING PRICE";
   public static final String TCG_PLAYER_PRICE_CARD_ENTITIES_ITEM = "TCGP PLAYER PRICE CARD";
-  public static final String CARD_IMAGE_ITEM = "CARD IMAGE";
+  public static final String CARD_IMAGE_DTO_ITEM = "CARD IMAGE DTO";
   public static final String HASH_IMAGE_ITEM = "HASH IMAGE";
+  public static final String FORMATTED_ERROR_ITEM = "FORMATTED_ERROR_ITEM";
   // Logger formating
   public static final String LINE_BREAK = "\n";
   public static final String SPACE = "";

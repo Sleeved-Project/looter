@@ -55,7 +55,7 @@ public class CardToCardImageDTOReader implements ItemReader<CardImageDTO> {
                 continue;
             } catch (Exception e) {
                 String formatedItem = looterScrapingErrorHandler.formatErrorItem(
-                    Constantes.CARD_IMAGE_ITEM,
+                    Constantes.CARD_IMAGE_DTO_ITEM,
                     card.getId());
                 looterScrapingErrorHandler.handle(e, Constantes.CARD_IMAGE_READER_CONTEXT, Constantes.READER_ACTION,
                         formatedItem);

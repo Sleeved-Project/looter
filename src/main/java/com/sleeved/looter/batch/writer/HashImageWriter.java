@@ -23,6 +23,7 @@ public class HashImageWriter implements ItemWriter<HashImageDTO> {
   public void write(Chunk<? extends HashImageDTO> chunk) throws Exception {
     for (HashImageDTO cardEntities : chunk) {
       try {
+        log.info("Writing HashImageDTO: {}", cardEntities);
         return;
       } catch (Exception e) {
         String formatedItem = looterScrapingErrorHandler.formatErrorItem(

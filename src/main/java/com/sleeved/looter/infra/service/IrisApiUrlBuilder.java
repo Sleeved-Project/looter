@@ -3,6 +3,8 @@ package com.sleeved.looter.infra.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.sleeved.looter.common.util.Constantes;
+
 @Component
 public class IrisApiUrlBuilder {
 
@@ -15,12 +17,9 @@ public class IrisApiUrlBuilder {
   @Value("${iris.api.url.base:api/v1}")
   private String baseUrl;
 
-  @Value("${iris.api.url.endpoint.hash:images/hash/url}")
-  private String hashEndpoint;
-
-  public String buildUrl() {
-    return String.format("%s://%s/%s/%s",
-        protocole, domain, baseUrl, hashEndpoint);
+  public String buildUrl(String endpoint) {
+    String irisUrl = String.format(Constantes.API_URL_FORMAT, protocole, domain);
+    return String.format(Constantes.IRIS_API_URL_BASE_FORMAT, irisUrl, baseUrl, endpoint);
   }
 
 }
