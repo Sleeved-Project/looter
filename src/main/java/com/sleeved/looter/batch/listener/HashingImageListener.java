@@ -40,10 +40,4 @@ public class HashingImageListener implements JobExecutionListener, StepExecution
       log.info(Constantes.LINE_BREAK);
     }
   }
-
-  @Override
-  public ExitStatus afterStep(StepExecution stepExecution) {
-    log.info(Constantes.SPACE);
-    return stepExecution.getExitStatus();
-  }
 }
