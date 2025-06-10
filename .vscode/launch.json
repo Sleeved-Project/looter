@@ -22,6 +22,7 @@
       "type": "pickString",
       "description": "What job do you want to run ?",
       "options": [
+        "hashingCardImageJob",
         "scrapingCardJob",
         "scrapingPriceJob",
         "scrapingPriceJobWithoutApi"
