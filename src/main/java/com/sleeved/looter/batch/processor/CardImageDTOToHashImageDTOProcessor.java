@@ -28,6 +28,10 @@ public class CardImageDTOToHashImageDTOProcessor
 
   @Override
   public HashImageDTO process(CardImageDTO item) {
+    if (item == null || item.getImageUrl() == null || item.getImageUrl().isEmpty()) {
+      return null;
+    }
+    
     try {
       String hash = irisApiService.fetchHashImage(item.getImageUrl());
       
