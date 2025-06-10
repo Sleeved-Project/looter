@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sleeved.looter.infra.dto.CardImageDTO;
 import com.sleeved.looter.infra.dto.HashImageDTO;
+import com.sleeved.looter.mock.infra.CardImageDTOMock;
 
 @ExtendWith(MockitoExtension.class)
 public class HashImageMapperTest {
@@ -21,11 +22,11 @@ public class HashImageMapperTest {
     
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private static final String IMAGE_URL = "http://example.com/image.jpg";
+
     @Test
     void toHashImageDTO_shouldReturnHashImageDTO_whenResponseContainsHash() {
-        CardImageDTO cardImageDTO = new CardImageDTO();
-        cardImageDTO.setCardId("swsh12-1");
-        cardImageDTO.setImageUrl("http://example.com/image.jpg");
+        CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(IMAGE_URL);
         
         ObjectNode response = objectMapper.createObjectNode();
         response.put("hash", "abc123def456");
@@ -33,15 +34,13 @@ public class HashImageMapperTest {
         HashImageDTO result = hashImageMapper.toHashImageDTO(cardImageDTO, response);
         
         assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo("swsh12-1");
+        assertThat(result.getId()).isEqualTo("card-image-id");
         assertThat(result.getHash()).isEqualTo("abc123def456");
     }
     
     @Test
     void toHashImageDTO_shouldReturnNull_whenResponseIsNull() {
-        CardImageDTO cardImageDTO = new CardImageDTO();
-        cardImageDTO.setCardId("swsh12-1");
-        cardImageDTO.setImageUrl("http://example.com/image.jpg");
+        CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(IMAGE_URL);
         
         HashImageDTO result = hashImageMapper.toHashImageDTO(cardImageDTO, null);
         
@@ -50,9 +49,7 @@ public class HashImageMapperTest {
     
     @Test
     void toHashImageDTO_shouldThrowException_whenResponseDoesNotContainHash() {
-        CardImageDTO cardImageDTO = new CardImageDTO();
-        cardImageDTO.setCardId("swsh12-1");
-        cardImageDTO.setImageUrl("http://example.com/image.jpg");
+        CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(IMAGE_URL);
         
         ObjectNode response = objectMapper.createObjectNode();
         response.put("otherField", "someValue");

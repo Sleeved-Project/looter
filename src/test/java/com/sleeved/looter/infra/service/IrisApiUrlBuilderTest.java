@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class IrisApiUrlBuilderTest {
 
+  @InjectMocks
   private IrisApiUrlBuilder irisApiUrlBuilder;
 
   private final String TEST_PROTOCOLE = "http";
@@ -19,7 +21,6 @@ public class IrisApiUrlBuilderTest {
   @BeforeEach
   void setUp() {
     irisApiUrlBuilder = new IrisApiUrlBuilder();
-
     ReflectionTestUtils.setField(irisApiUrlBuilder, "protocole", TEST_PROTOCOLE);
     ReflectionTestUtils.setField(irisApiUrlBuilder, "domain", TEST_DOMAIN);
     ReflectionTestUtils.setField(irisApiUrlBuilder, "baseUrl", TEST_BASE_URL);

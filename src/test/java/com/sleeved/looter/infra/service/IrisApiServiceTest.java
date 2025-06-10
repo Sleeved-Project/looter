@@ -7,7 +7,9 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -41,17 +43,20 @@ class IrisApiServiceTest {
     @Mock
     private HttpEntity<String> requestEntity;
     
+    @InjectMocks
     private IrisApiService irisApiService;
+
+    @Spy
     private ObjectMapper objectMapper = new ObjectMapper();
     
     @BeforeEach
     void setUp() {
         when(restTemplateBuilder.build()).thenReturn(restTemplate);
-        
+
         irisApiService = new IrisApiService(
-            restTemplateBuilder,
-            looterScrapingErrorHandler,
-            irisApiUrlBuilder,
+            restTemplateBuilder, 
+            looterScrapingErrorHandler, 
+            irisApiUrlBuilder, 
             requestFactory
         );
         

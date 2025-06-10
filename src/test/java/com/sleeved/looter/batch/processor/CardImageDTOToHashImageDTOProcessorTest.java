@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -34,16 +35,12 @@ class CardImageDTOToHashImageDTOProcessorTest {
     @Mock
     private HashImageMapper hashImageMapper;
 
+    @InjectMocks
     private CardImageDTOToHashImageDTOProcessor processor;
     private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        processor = new CardImageDTOToHashImageDTOProcessor(
-            looterScrapingErrorHandler,
-            irisApiService,
-            hashImageMapper
-        );
         objectMapper = new ObjectMapper();
     }
 
@@ -56,7 +53,7 @@ class CardImageDTOToHashImageDTOProcessorTest {
             .put("hash", "abc123def456");
         
         HashImageDTO expectedHashImageDTO = new HashImageDTO();
-        expectedHashImageDTO.setId("hash-image-id");
+        expectedHashImageDTO.setId("card-image-id");
         expectedHashImageDTO.setHash("abc123def456");
 
         when(irisApiService.fetchHashImage(imageUrl)).thenReturn(mockResponse);

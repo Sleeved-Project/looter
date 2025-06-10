@@ -3,9 +3,10 @@ package com.sleeved.looter.infra.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,15 +19,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ExtendWith(SpringExtension.class)
 public class IrisApiRequestFactoryTest {
 
+    @InjectMocks
     private IrisApiRequestFactory irisApiRequestFactory;
-    private ObjectMapper objectMapper;
-    private final String TEST_IMAGE_URL = "https://example.com/image.jpg";
+    
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeEach
-    void setUp() {
-        objectMapper = new ObjectMapper();
-        irisApiRequestFactory = new IrisApiRequestFactory(objectMapper);
-    }
+    private final String TEST_IMAGE_URL = "https://example.com/image.jpg";
 
     @Test
     void createHashImageRequest_shouldReturnEntityWithCorrectHeaders() throws JsonProcessingException {
