@@ -16,15 +16,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sleeved.looter.common.util.Constantes;
+import com.sleeved.looter.domain.entity.iris.HashCard;
 import com.sleeved.looter.infra.dto.CardImageDTO;
-import com.sleeved.looter.infra.dto.HashImageDTO;
 import com.sleeved.looter.infra.mapper.HashImageMapper;
 import com.sleeved.looter.infra.service.IrisApiService;
 import com.sleeved.looter.infra.service.LooterScrapingErrorHandler;
+import com.sleeved.looter.mock.domain.HashCardMock;
 import com.sleeved.looter.mock.infra.CardImageDTOMock;
 
 @ExtendWith(MockitoExtension.class)
-class CardImageDTOToHashImageDTOProcessorTest {
+class CardImageDTOToHashCardProcessorTest {
 
     @Mock
     private IrisApiService irisApiService;
@@ -36,7 +37,7 @@ class CardImageDTOToHashImageDTOProcessorTest {
     private HashImageMapper hashImageMapper;
 
     @InjectMocks
-    private CardImageDTOToHashImageDTOProcessor processor;
+    private CardImageDTOToHashCardProcessor processor;
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -45,22 +46,20 @@ class CardImageDTOToHashImageDTOProcessorTest {
     }
 
     @Test
-    void process_shouldReturnHashImageDTO_whenApiCallSucceeds() throws Exception {
+    void process_shouldReturnHashCard_whenApiCallSucceeds() throws Exception {
         String imageUrl = "https://example.com/card-image.jpg";
         CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(imageUrl);
         
         JsonNode mockResponse = objectMapper.createObjectNode()
             .put("hash", "abc123def456");
         
-        HashImageDTO expectedHashImageDTO = new HashImageDTO();
-        expectedHashImageDTO.setId("card-image-id");
-        expectedHashImageDTO.setHash("abc123def456");
+        HashCard expectedHashCard = HashCardMock.createMock("test-card-1", "abc123def456");
 
         when(irisApiService.fetchHashImage(imageUrl)).thenReturn(mockResponse);
-        when(hashImageMapper.toHashImageDTO(cardImageDTO, mockResponse))
-            .thenReturn(expectedHashImageDTO);
+        when(hashImageMapper.toHashCard(cardImageDTO, mockResponse))
+            .thenReturn(expectedHashCard);
 
-        HashImageDTO result = processor.process(cardImageDTO);
+        HashCard result = processor.process(cardImageDTO);
 
         assertThat(result)
             .as("Result should not be null")
@@ -71,7 +70,7 @@ class CardImageDTOToHashImageDTOProcessorTest {
             .isEqualTo("abc123def456");
 
         verify(irisApiService).fetchHashImage(imageUrl);
-        verify(hashImageMapper).toHashImageDTO(cardImageDTO, mockResponse);
+        verify(hashImageMapper).toHashCard(cardImageDTO, mockResponse);
         verifyNoInteractions(looterScrapingErrorHandler);
     }
 
@@ -88,7 +87,7 @@ class CardImageDTOToHashImageDTOProcessorTest {
             cardImageDTO.toString()))
             .thenReturn(formattedItem);
 
-        HashImageDTO result = processor.process(cardImageDTO);
+        HashCard result = processor.process(cardImageDTO);
 
         assertThat(result)
             .as("Result should be null when exception occurs")
@@ -118,21 +117,21 @@ class CardImageDTOToHashImageDTOProcessorTest {
         String formattedItem = "formatted-card-dto-item";
 
         when(irisApiService.fetchHashImage(imageUrl)).thenReturn(mockResponse);
-        when(hashImageMapper.toHashImageDTO(cardImageDTO, mockResponse))
+        when(hashImageMapper.toHashCard(cardImageDTO, mockResponse))
             .thenThrow(mapperException);
         when(looterScrapingErrorHandler.formatErrorItem(
             Constantes.CARD_DTO_ITEM, 
             cardImageDTO.toString()))
             .thenReturn(formattedItem);
 
-        HashImageDTO result = processor.process(cardImageDTO);
+        HashCard result = processor.process(cardImageDTO);
 
         assertThat(result)
             .as("Result should be null when mapper throws exception")
             .isNull();
 
         verify(irisApiService).fetchHashImage(imageUrl);
-        verify(hashImageMapper).toHashImageDTO(cardImageDTO, mockResponse);
+        verify(hashImageMapper).toHashCard(cardImageDTO, mockResponse);
         verify(looterScrapingErrorHandler).formatErrorItem(
             Constantes.CARD_DTO_ITEM, 
             cardImageDTO.toString());

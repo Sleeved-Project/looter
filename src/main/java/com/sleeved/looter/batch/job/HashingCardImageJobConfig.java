@@ -13,11 +13,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.sleeved.looter.batch.listener.HashingImageListener;
-import com.sleeved.looter.batch.processor.CardImageDTOToHashImageDTOProcessor;
+import com.sleeved.looter.batch.processor.CardImageDTOToHashCardProcessor;
 import com.sleeved.looter.batch.reader.CardToCardImageDTOReader;
 import com.sleeved.looter.batch.writer.HashImageWriter;
+import com.sleeved.looter.domain.entity.iris.HashCard;
 import com.sleeved.looter.infra.dto.CardImageDTO;
-import com.sleeved.looter.infra.dto.HashImageDTO;
 
 @Configuration
 public class HashingCardImageJobConfig {
@@ -41,15 +41,15 @@ public class HashingCardImageJobConfig {
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
             CardToCardImageDTOReader cardToCardImageDTOReader,
-            CardImageDTOToHashImageDTOProcessor cardImageDTOToHashImageDTOProcessor,
-            HashImageWriter writer
+            CardImageDTOToHashCardProcessor cardImageDTOToHashCardProcessor,
+            HashImageWriter hashImageWriter
             ) {
         return new StepBuilder("hashImagesStep", jobRepository)
-            .<CardImageDTO, HashImageDTO>chunk(chunkSize, transactionManager)
+            .<CardImageDTO, HashCard>chunk(chunkSize, transactionManager)
             .listener(hashingImageListener)
             .reader(cardToCardImageDTOReader)
-            .processor(cardImageDTOToHashImageDTOProcessor)
-            .writer(writer)
+            .processor(cardImageDTOToHashCardProcessor)
+            .writer(hashImageWriter)
             .build();
     }
 }

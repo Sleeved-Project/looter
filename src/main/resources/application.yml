@@ -46,7 +46,7 @@ atlas:
 
 iris:
   datasource:
-    jdbc-url: jdbc:mysql://localhost:3311/iris-db
+    jdbc-url: jdbc:mysql://localhost:3311/iris_db
     username: ${IRIS_DB_USERNAME}
     password: ${IRIS_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver

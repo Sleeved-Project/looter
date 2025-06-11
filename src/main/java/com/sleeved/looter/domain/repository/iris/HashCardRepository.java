@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.sleeved.looter.domain.entity.iris.HashCard;
 
 @Repository
-public interface HashCardRepository extends JpaRepository<HashCard, Long> {
-  Optional<HashCard> findByCardId(String cardId);
+public interface HashCardRepository extends JpaRepository<HashCard, String> {
+  Optional<HashCard> findById(String id);
 }

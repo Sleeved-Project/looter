@@ -10,8 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sleeved.looter.domain.entity.iris.HashCard;
 import com.sleeved.looter.infra.dto.CardImageDTO;
-import com.sleeved.looter.infra.dto.HashImageDTO;
 import com.sleeved.looter.mock.infra.CardImageDTOMock;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,13 +25,13 @@ public class HashImageMapperTest {
     private static final String IMAGE_URL = "http://example.com/image.jpg";
 
     @Test
-    void toHashImageDTO_shouldReturnHashImageDTO_whenResponseContainsHash() {
+    void toHashCard_shouldReturnHashCard_whenResponseContainsHash() {
         CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(IMAGE_URL);
         
         ObjectNode response = objectMapper.createObjectNode();
         response.put("hash", "abc123def456");
         
-        HashImageDTO result = hashImageMapper.toHashImageDTO(cardImageDTO, response);
+        HashCard result = hashImageMapper.toHashCard(cardImageDTO, response);
         
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo("card-image-id");
@@ -39,22 +39,22 @@ public class HashImageMapperTest {
     }
     
     @Test
-    void toHashImageDTO_shouldReturnNull_whenResponseIsNull() {
+    void toHashCard_shouldReturnNull_whenResponseIsNull() {
         CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(IMAGE_URL);
         
-        HashImageDTO result = hashImageMapper.toHashImageDTO(cardImageDTO, null);
+        HashCard result = hashImageMapper.toHashCard(cardImageDTO, null);
         
         assertThat(result).isNull();
     }
     
     @Test
-    void toHashImageDTO_shouldThrowException_whenResponseDoesNotContainHash() {
+    void toHashCard_shouldThrowException_whenResponseDoesNotContainHash() {
         CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(IMAGE_URL);
         
         ObjectNode response = objectMapper.createObjectNode();
         response.put("otherField", "someValue");
         
-        assertThatThrownBy(() -> hashImageMapper.toHashImageDTO(cardImageDTO, response))
+        assertThatThrownBy(() -> hashImageMapper.toHashCard(cardImageDTO, response))
             .isInstanceOf(NullPointerException.class);
     }
 }
