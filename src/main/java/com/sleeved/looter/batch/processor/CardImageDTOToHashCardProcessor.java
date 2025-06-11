@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sleeved.looter.common.util.Constantes;
+import com.sleeved.looter.domain.entity.iris.HashCard;
 import com.sleeved.looter.infra.dto.CardImageDTO;
-import com.sleeved.looter.infra.dto.HashImageDTO;
 import com.sleeved.looter.infra.mapper.HashImageMapper;
 import com.sleeved.looter.infra.service.IrisApiService;
 import com.sleeved.looter.infra.service.LooterScrapingErrorHandler;
@@ -15,14 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class CardImageDTOToHashImageDTOProcessor
-    implements ItemProcessor<CardImageDTO, HashImageDTO> {
+public class CardImageDTOToHashCardProcessor
+    implements ItemProcessor<CardImageDTO, HashCard> {
 
   private final IrisApiService irisApiService;
   private final LooterScrapingErrorHandler looterScrapingErrorHandler;
   private final HashImageMapper hashImageMapper;
 
-  public CardImageDTOToHashImageDTOProcessor(
+  public CardImageDTOToHashCardProcessor(
       LooterScrapingErrorHandler looterScrapingErrorHandler,
       IrisApiService irisApiService,
       HashImageMapper hashImageMapper) {
@@ -32,11 +32,14 @@ public class CardImageDTOToHashImageDTOProcessor
   }
 
   @Override
-  public HashImageDTO process(CardImageDTO item) {
+  public HashCard process(CardImageDTO item) {
+    if (item == null || item.getImageUrl() == null || item.getImageUrl().isEmpty()) {
+      return null;
+    }
+    
     try {
-      log.info("Processing CardImageDTO to HashImageDTO: {}", item);
       JsonNode response = irisApiService.fetchHashImage(item.getImageUrl());
-      return hashImageMapper.toHashImageDTO(item, response);
+      return hashImageMapper.toHashCard(item, response);
 
     } catch (Exception e) {
       String formatedItem = looterScrapingErrorHandler.formatErrorItem(

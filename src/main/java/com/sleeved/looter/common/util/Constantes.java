@@ -26,6 +26,7 @@ public class Constantes {
   public static final String CARD_IMAGE_TO_HASH_IMAGE_PROCESSOR_CONTEXT = "CARD IMAGE TO HASH IMAGE PROCESSOR";
   public static final String HASH_SERVICE_CONTEXT = "HASH SERVICE";
   public static final String HASH_IMAGE_FETCH_CONTEXT = "HASH IMAGE FETCH";
+  public static final String HASH_IMAGE_WRITER_CONTEXT = "HASH IMAGE WRITER";
   // Error action
   public static final String CREATE_ACTION = "CREATE";
   public static final String UPDATE_ACTION = "UPDATE";
