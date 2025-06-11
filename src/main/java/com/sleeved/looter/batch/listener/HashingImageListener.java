@@ -1,6 +1,5 @@
 package com.sleeved.looter.batch.listener;
 
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.StepExecution;
@@ -39,11 +38,5 @@ public class HashingImageListener implements JobExecutionListener, StepExecution
       }
       log.info(Constantes.LINE_BREAK);
     }
-  }
-
-  @Override
-  public ExitStatus afterStep(StepExecution stepExecution) {
-    log.info(Constantes.SPACE);
-    return stepExecution.getExitStatus();
   }
 }

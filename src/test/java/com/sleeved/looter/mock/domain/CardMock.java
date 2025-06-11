@@ -1,5 +1,8 @@
 package com.sleeved.looter.mock.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sleeved.looter.domain.entity.atlas.Artist;
 import com.sleeved.looter.domain.entity.atlas.Card;
 import com.sleeved.looter.domain.entity.atlas.Legalities;
@@ -64,4 +67,23 @@ public class CardMock {
         null,
         null);
   }
+
+  public static List<Card> createMockCardsWithImage(int count) {
+    List<Card> cards = new ArrayList<>();
+    for (int i = 0; i < count; i++) {
+      Card card = new Card();
+      card.setId("card-" + (i + 1));
+      card.setImageLarge("http://example.com/card" + (i + 1) + ".jpg");
+      cards.add(card);
+    }
+    return cards;
+  }
+
+  public static Card createMockCardWithoutImage() {
+    Card card = new Card();
+    card.setId("card-no-image");
+    card.setImageLarge(null);
+    return card;
+  }
+
 }

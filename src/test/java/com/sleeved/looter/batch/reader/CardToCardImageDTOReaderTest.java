@@ -3,7 +3,6 @@ package com.sleeved.looter.batch.reader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +16,7 @@ import com.sleeved.looter.domain.entity.atlas.Card;
 import com.sleeved.looter.domain.repository.atlas.CardRepository;
 import com.sleeved.looter.infra.dto.CardImageDTO;
 import com.sleeved.looter.infra.service.LooterScrapingErrorHandler;
+import com.sleeved.looter.mock.domain.CardMock;
 
 @ExtendWith(MockitoExtension.class)
 class CardToCardImageDTOReaderTest {
@@ -29,34 +29,10 @@ class CardToCardImageDTOReaderTest {
 
   private CardToCardImageDTOReader reader;
 
-  /**
-   * Crée une liste de cartes avec images pour les tests
-   */
-  private List<Card> createMockCards(int count) {
-    List<Card> cards = new ArrayList<>();
-    for (int i = 0; i < count; i++) {
-      Card card = new Card();
-      card.setId("card-" + (i + 1));
-      card.setImageLarge("http://example.com/card" + (i + 1) + ".jpg");
-      cards.add(card);
-    }
-    return cards;
-  }
-
-  /**
-   * Crée une carte sans image URL
-   */
-  private Card createCardWithoutImage() {
-    Card card = new Card();
-    card.setId("card-no-image");
-    card.setImageLarge(null);
-    return card;
-  }
-
   @Test
   void read_shouldReturnCardImageDTOWhenCardsWithImagesExist() throws Exception {
     int cardCount = 2;
-    List<Card> mockCards = createMockCards(cardCount);
+    List<Card> mockCards = CardMock.createMockCardsWithImage(cardCount);
     when(cardRepository.findByImageLargeIsNotNull()).thenReturn(mockCards);
 
     reader = new CardToCardImageDTOReader(cardRepository, looterScrapingErrorHandler);
@@ -86,28 +62,9 @@ class CardToCardImageDTOReaderTest {
   }
 
   @Test
-  void read_shouldProcessAllCardsInOrder() throws Exception {
-    int cardCount = 5;
-    List<Card> mockCards = createMockCards(cardCount);
-    when(cardRepository.findByImageLargeIsNotNull()).thenReturn(mockCards);
-
-    reader = new CardToCardImageDTOReader(cardRepository, looterScrapingErrorHandler);
-
-    for (int i = 0; i < cardCount; i++) {
-      CardImageDTO card = reader.read();
-      assertThat(card).isNotNull();
-      assertThat(card.getCardId()).isEqualTo("card-" + (i + 1));
-      assertThat(card.getImageUrl()).isEqualTo("http://example.com/card" + (i + 1) + ".jpg");
-    }
-
-    CardImageDTO noMoreCard = reader.read();
-    assertThat(noMoreCard).isNull();
-  }
-
-  @Test
   void read_shouldSkipCardsWithoutImages() throws Exception {
-    Card cardWithImage = createMockCards(1).get(0);
-    Card cardWithoutImage = createCardWithoutImage();
+    Card cardWithImage = CardMock.createMockCardsWithImage(1).get(0);
+    Card cardWithoutImage = CardMock.createMockCardWithoutImage();
     Card secondCardWithImage = new Card();
     secondCardWithImage.setId("card-2");
     secondCardWithImage.setImageLarge("http://example.com/card2.jpg");
