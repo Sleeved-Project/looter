@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -52,6 +53,9 @@ public class IrisApiService {
           throw new RuntimeException("Invalid response format or missing 'hash' field");
         }
         return body;
+    } catch (HttpClientErrorException e) {
+      log.error("Bad request error while fetching hash image: {}", e.getMessage());
+      return null;
     } catch (Exception e) {
       String formatedItem = looterScrapingErrorHandler.formatErrorItem(
           Constantes.HASH_IMAGE_ITEM, imageUrl);
