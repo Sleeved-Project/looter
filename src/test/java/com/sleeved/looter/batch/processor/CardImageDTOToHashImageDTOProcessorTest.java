@@ -1,10 +1,13 @@
 package com.sleeved.looter.batch.processor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sleeved.looter.common.util.Constantes;
 import com.sleeved.looter.domain.entity.iris.HashCard;
+import com.sleeved.looter.domain.repository.iris.HashCardRepository;
 import com.sleeved.looter.infra.dto.CardImageDTO;
 import com.sleeved.looter.infra.mapper.HashImageMapper;
 import com.sleeved.looter.infra.service.IrisApiService;
@@ -36,6 +40,9 @@ class CardImageDTOToHashCardProcessorTest {
     @Mock
     private HashImageMapper hashImageMapper;
 
+    @Mock
+    private HashCardRepository hashCardRepository;
+
     @InjectMocks
     private CardImageDTOToHashCardProcessor processor;
     private ObjectMapper objectMapper;
@@ -49,6 +56,8 @@ class CardImageDTOToHashCardProcessorTest {
     void process_shouldReturnHashCard_whenApiCallSucceeds() throws Exception {
         String imageUrl = "https://example.com/card-image.jpg";
         CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(imageUrl);
+
+        when(hashCardRepository.findById(anyString())).thenReturn(Optional.empty());
         
         JsonNode mockResponse = objectMapper.createObjectNode()
             .put("hash", "abc123def456");
@@ -75,11 +84,31 @@ class CardImageDTOToHashCardProcessorTest {
     }
 
     @Test
+    void process_shouldReturnNull_whenCardAlreadyExists() {
+        String imageUrl = "https://example.com/card-image.jpg";
+        CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(imageUrl);
+        HashCard existingCard = HashCardMock.createMock(cardImageDTO.getCardId(), "existing-hash");
+        
+        when(hashCardRepository.findById(cardImageDTO.getCardId())).thenReturn(Optional.of(existingCard));
+        
+        HashCard result = processor.process(cardImageDTO);
+        
+        assertThat(result)
+            .as("Result should be null when card already exists")
+            .isNull();
+            
+        verify(hashCardRepository).findById(cardImageDTO.getCardId());
+        verifyNoInteractions(irisApiService, hashImageMapper, looterScrapingErrorHandler);
+    }
+
+    @Test
     void process_shouldReturnNull_whenIrisApiServiceThrowsException() {
         String imageUrl = "https://example.com/card-image.jpg";
         CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(imageUrl);
         RuntimeException apiException = new RuntimeException("API call failed");
         String formattedItem = "formatted-card-dto-item";
+
+        when(hashCardRepository.findById(anyString())).thenReturn(Optional.empty());
 
         when(irisApiService.fetchHashImage(imageUrl)).thenThrow(apiException);
         when(looterScrapingErrorHandler.formatErrorItem(
@@ -109,6 +138,8 @@ class CardImageDTOToHashCardProcessorTest {
     void process_shouldReturnNull_whenMapperThrowsException() {
         String imageUrl = "https://example.com/card-image.jpg";
         CardImageDTO cardImageDTO = CardImageDTOMock.createCardImageDTO(imageUrl);
+
+        when(hashCardRepository.findById(anyString())).thenReturn(Optional.empty());
         
         JsonNode mockResponse = objectMapper.createObjectNode()
             .put("hash", "abc123def456");

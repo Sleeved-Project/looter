@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sleeved.looter.common.util.Constantes;
 import com.sleeved.looter.domain.entity.iris.HashCard;
+import com.sleeved.looter.domain.repository.iris.HashCardRepository;
 import com.sleeved.looter.infra.dto.CardImageDTO;
 import com.sleeved.looter.infra.mapper.HashImageMapper;
 import com.sleeved.looter.infra.service.IrisApiService;
@@ -21,19 +22,29 @@ public class CardImageDTOToHashCardProcessor
   private final IrisApiService irisApiService;
   private final LooterScrapingErrorHandler looterScrapingErrorHandler;
   private final HashImageMapper hashImageMapper;
+  private final HashCardRepository hashCardRepository;
 
   public CardImageDTOToHashCardProcessor(
       LooterScrapingErrorHandler looterScrapingErrorHandler,
       IrisApiService irisApiService,
-      HashImageMapper hashImageMapper) {
+      HashImageMapper hashImageMapper,
+      HashCardRepository hashCardRepository) {
     this.irisApiService = irisApiService;
     this.looterScrapingErrorHandler = looterScrapingErrorHandler;
     this.hashImageMapper = hashImageMapper;
+    this.hashCardRepository = hashCardRepository;
   }
 
   @Override
   public HashCard process(CardImageDTO item) {
     if (item == null || item.getImageUrl() == null || item.getImageUrl().isEmpty()) {
+      return null;
+    }
+
+    // Check if the hash already exists in the repository
+    HashCard existingHashCard = hashCardRepository.findById(item.getCardId()).orElse(null);
+    if (existingHashCard != null) {
+      log.debug("HashCard with ID {} already exists, skipping processing.", item.getCardId());
       return null;
     }
     
