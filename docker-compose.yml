@@ -1,0 +1,78 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      # Permet de surcharger les variables du .env via la ligne de commande
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-local}
+      - BATCH_JOB_NAME=${BATCH_JOB_NAME:-scrapingCardJob}
+    networks:
+      - looter-network
+    depends_on:
+      scrap-db:
+        condition: service_healthy
+      staging-db:
+        condition: service_healthy
+
+  scrap-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LOOTER_SCRAP_DB_PASSWORD}
+      MYSQL_DATABASE: ${LOOTER_SCRAP_DB_NAME}
+    volumes:
+      - scrap-db-data:/var/lib/mysql
+      - ./scrap_db_dump.sql:/docker-entrypoint-initdb.d/scrap_db_dump.sql
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${LOOTER_SCRAP_DB_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - looter-network
+
+  staging-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LOOTER_STAGING_DB_PASSWORD}
+      MYSQL_DATABASE: ${LOOTER_STAGING_DB_NAME}
+    volumes:
+      - staging-db-data:/var/lib/mysql
+      - ./staging_db_dump.sql:/docker-entrypoint-initdb.d/staging_db_dump.sql
+    ports:
+      - "3309:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${LOOTER_STAGING_DB_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - looter-network
+
+networks:
+  looter-network:
+
+volumes:
+  scrap-db-data:
+  staging-db-data:
