@@ -13,7 +13,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
   batch:
     jdbc:
       initialize-schema: never
@@ -70,4 +72,4 @@ tcgplayer:
         paginate: cards?page=%d&pageSize=%d&orderBy=set.releaseDate
         paginate-prices: cards?page=%d&pageSize=%d&orderBy=set.releaseDate&select=id,name,tcgplayer,cardmarket
         pagesize: 200
-        page: 1
+        page: 90

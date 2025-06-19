@@ -2,10 +2,7 @@ services:
   app:
     build: .
     env_file: .env
-    environment:
-      # Permet de surcharger les variables du .env via la ligne de commande
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-local}
-      - BATCH_JOB_NAME=${BATCH_JOB_NAME:-scrapingCardJob}
+    command: --spring.batch.job.name=${BATCH_JOB_NAME:-scrapingCardJob} --spring.profiles.active=${SPRING_PROFILES_ACTIVE:-local}
     networks:
       - looter-network
     depends_on:
