@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "card_subtype")
+@Table(name = "Card_Subtype")
 @Data
 public class CardSubtype {
   @Id
