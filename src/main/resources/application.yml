@@ -6,13 +6,15 @@ spring:
     name: looter
   datasource:
     hikari:
-      jdbc-url: jdbc:mysql://localhost:3306/looter_scrap_db
+      jdbc-url: ${LOOTER_SCRAP_JDBC_URL}
       username: ${LOOTER_SCRAP_DB_USERNAME}
       password: ${LOOTER_SCRAP_DB_PASSWORD}
       driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: false
   batch:
     jdbc:
@@ -25,35 +27,35 @@ logging:
   level:
     com:
       sleeved:
-        looter: INFO
+        looter: DEBUG
 
 looter:
   batch:
     chunksize: 10
   staging:
     datasource:
-      jdbc-url: jdbc:mysql://localhost:3306/looter_staging_db
+      jdbc-url: ${LOOTER_STAGING_JDBC_URL}
       username: ${LOOTER_STAGING_DB_USERNAME}
       password: ${LOOTER_STAGING_DB_PASSWORD}
       driver-class-name: com.mysql.cj.jdbc.Driver
 
 atlas:
   datasource:
-    jdbc-url: jdbc:mysql://localhost:3306/sleeved_db
+    jdbc-url: ${SLEEVED_DB_JDBC_URL}
     username: ${SLEEVED_DB_USERNAME}
     password: ${SLEEVED_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 iris:
   datasource:
-    jdbc-url: jdbc:mysql://localhost:3311/iris_db
+    jdbc-url: ${IRIS_DB_JDBC_URL}
     username: ${IRIS_DB_USERNAME}
     password: ${IRIS_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   api:
     url:
       protocole: http
-      domain: localhost:8083
+      domain: iris-api:8083
       base: api/v1
       endpoint:
         hash: images/hash/url

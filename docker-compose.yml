@@ -1,0 +1,77 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    networks:
+      - default
+      - looter-network
+    depends_on:
+      scrap-db:
+        condition: service_healthy
+      staging-db:
+        condition: service_healthy
+
+  scrap-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LOOTER_SCRAP_DB_PASSWORD}
+      MYSQL_DATABASE: ${LOOTER_SCRAP_DB_NAME}
+    volumes:
+      - scrap-db-data:/var/lib/mysql
+      - ./scrap_db_dump.sql:/docker-entrypoint-initdb.d/scrap_db_dump.sql
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${LOOTER_SCRAP_DB_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - default
+
+  staging-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${LOOTER_STAGING_DB_PASSWORD}
+      MYSQL_DATABASE: ${LOOTER_STAGING_DB_NAME}
+    volumes:
+      - staging-db-data:/var/lib/mysql
+      - ./staging_db_dump.sql:/docker-entrypoint-initdb.d/staging_db_dump.sql
+    ports:
+      - "3309:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${LOOTER_STAGING_DB_PASSWORD}",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - default
+
+networks:
+  default:
+  looter-network:
+    external: true
+
+volumes:
+  scrap-db-data:
+  staging-db-data:
