@@ -17,8 +17,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Rendre le script de test exécutable
-        run: chmod +x ./run-tests.sh
+      - name: Build test image
+        run: docker compose -f docker-compose.test.yml build
 
-      - name: Exécuter les tests avec Docker
-        run: ./run-tests.sh --build
+      - name: Run tests
+        run: docker compose -f docker-compose.test.yml run --rm test
