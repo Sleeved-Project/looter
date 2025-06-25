@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "card_weakness")
+@Table(name = "Card_Weakness")
 @Data
 public class CardWeakness {
   @Id

@@ -25,7 +25,7 @@ public class Attack {
   @Column(nullable = true)
   private String damage;
 
-  @Column(nullable = false)
+  @Column(name = "converted_energy_cost", nullable = false)
   private Integer convertedEnergyCost;
 
 }

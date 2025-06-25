@@ -20,25 +20,25 @@ public class Set {
   @Column(nullable = false)
   private String series;
 
-  @Column(nullable = false)
+  @Column(name = "printed_total", nullable = false)
   private int printedTotal;
 
   @Column(nullable = false)
   private int total;
 
-  @Column(nullable = true, length = 100)
+  @Column(name = "ptcgo_code", nullable = true, length = 100)
   private String ptcgoCode;
 
-  @Column(nullable = false)
+  @Column(name = "release_date", nullable = false)
   private LocalDate releaseDate;
 
-  @Column(nullable = false)
+  @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
 
-  @Column(nullable = false, columnDefinition = "mediumtext")
+  @Column(name = "image_symbol", nullable = false, columnDefinition = "mediumtext")
   private String imageSymbol;
 
-  @Column(nullable = false, columnDefinition = "mediumtext")
+  @Column(name = "image_logo", nullable = false, columnDefinition = "mediumtext")
   private String imageLogo;
 
   @ManyToOne

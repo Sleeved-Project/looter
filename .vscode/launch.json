@@ -6,7 +6,8 @@
       "request": "launch",
       "mainClass": "com.sleeved.looter.LooterApplication",
       "projectName": "looter",
-      "args": "--spring.profiles.active=${input:profile} --spring.batch.job.name=${input:jobName}"
+      "args": "--spring.profiles.active=${input:profile} --spring.batch.job.name=${input:jobName}",
+      "envFile": "${workspaceFolder}/.env"
     }
   ],
   "inputs": [

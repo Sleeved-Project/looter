@@ -7,18 +7,18 @@ on:
     branches: ["main", "develop"]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: "17"
-          distribution: "temurin"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Rendre le script de test exécutable
+        run: chmod +x ./run-tests.sh
+
+      - name: Exécuter les tests avec Docker
+        run: ./run-tests.sh --build
