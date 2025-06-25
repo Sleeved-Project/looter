@@ -1,9 +1,5 @@
 version: "3"
 
-vars:
-  DEFAULT_PROFILE: local
-  DEFAULT_JOB: scrapingCardJob
-
 tasks:
   default:
     desc: Display available commands
@@ -11,61 +7,107 @@ tasks:
       - task --list-all
     silent: true
 
+  # Setup Commandes
+  setup:
+    desc: Bulild images and start database services
+    cmds:
+      - |
+        docker compose build
+        docker compose up -d scrap-db staging-db
+        echo "✅ The database services are runing, next you can:"
+        echo "  - Import database with '<service-db>:import' command."
+        echo "  - Run a job with 'task run-job job=<jobName>' command."
+
   build:
-    desc: Construit l'image Docker
+    desc: Build docker images
     cmds:
       - docker compose build
 
-  up-db:
-    desc: Démarre les bases de données
-    cmds:
-      - docker compose up -d looter-db staging-db sleeved-db iris-db
-
   down:
-    desc: Arrête tous les services
+    desc: Stop all services
     cmds:
       - docker compose down
 
-  run:
-    desc: Exécute un job de batch avec un profil spécifique
-    summary: |
-      Usage: task run [job=<job_name>] [profile=<profile>]
-
-      Exemples:
-        - task run
-        - task run job=hashingCardImageJob
-        - task run job=scrapingCardJob profile=dev
+  # Batch Commandes
+  jobs:
+    desc: Show jobs available in the batch application
     cmds:
       - |
-        export BATCH_JOB_NAME={{.job}}
-        export SPRING_PROFILES_ACTIVE={{.profile}}
-        docker compose up
-    vars:
-      job: "{{.job | default .DEFAULT_JOB}}"
-      profile: "{{.profile | default .DEFAULT_PROFILE}}"
+        echo "=== Jobs available ==="
+        echo "- hashingCardImageJob: Hash all card images and save them into iris database"
+        echo "- scrapingCardJob: Scrap all cards from tcgAPI"
+        echo "- scrapingPriceJob: Scrap all today prices from tcgAPI"
+        echo "- scrapingPriceJobWithoutApi: Scrap all prices without using only staging database"
+    siltent: true
 
-  logs:
-    desc: Affiche les logs d'un service
-    summary: |
-      Usage: task logs service=<service_name>
-
-      Exemple:
-        - task logs service=looter-batch
+  run-job:
+    desc: Run a specific job in the batch application, use `task list-jobs` to see available jobs
+    params:
+      - name: job
+        desc: Job to run
+        type: choice
+        options:
+          - hashingCardImageJob
+          - scrapingCardJob
+          - scrapingPriceJob
+          - scrapingPriceJobWithoutApi
+        default: scrapingPriceJob
+      - name: profile
+        desc: Profil to use for the job
+        type: choice
+        options:
+          - local
+          - prod
+          - test
+        default: local
     cmds:
-      - docker compose logs -f {{.service}}
-    requires:
-      vars: [service]
+      - echo "Run {{.job}} with {{.profile}} profile"
+      - docker compose run --rm app --spring.batch.job.name={{.job}} --spring.profiles.active={{.profile}}
 
-  list-jobs:
-    desc: Liste les jobs disponibles
+  # Test Commandes
+  test:
+    desc: Setup and run tests
     cmds:
-      - 'echo "Jobs disponibles:"'
-      - 'echo "- hashingCardImageJob: Traitement des hashes d images"'
-      - 'echo "- scrapingCardJob: Récupération des cartes"'
-      - 'echo "- scrapingPriceJob: Récupération des prix (avec API)"'
-      - 'echo "- scrapingPriceJobWithoutApi: Récupération des prix (sans API)"'
+      - docker compose -f docker-compose.test.yml build
+      - docker compose -f docker-compose.test.yml run --rm test
 
-  default:
-    desc: Affiche l'aide
+  # Database Commandes
+  scrap-db:import:
+    desc: Import scrap_db database from dump file
     cmds:
-      - task --list
+      - echo "Importing scrap_db database from dump file..."
+      - |
+        source .env && \
+        echo "🔄 Starting import... " && \
+        (docker compose exec -T scrap-db mysql -uroot -p"$LOOTER_SCRAP_DB_PASSWORD" $LOOTER_SCRAP_DB_NAME < ./scrap_db_dump.sql 2>&1) && \
+        echo "✅ Import completed with success !"
+
+  scrap-db:export:
+    desc: Export scrap_db database into dump file
+    cmds:
+      - echo "Exporting scrap_db database into scrap_db_dump.sql..."
+      - |
+        source .env && \
+        echo "🔄 Starting export... " && \
+        (docker compose exec -T scrap-db mysqldump --databases $LOOTER_SCRAP_DB_NAME -uroot -p"$LOOTER_SCRAP_DB_PASSWORD" > ./scrap_db_dump.sql 2>/dev/null) && \
+        echo "✅ Export completed with success into ./scrap_db_dump.sql !"
+
+  staging-db:import:
+    desc: Import staging_db database from dump file
+    cmds:
+      - echo "Importing staging_db database from dump file..."
+      - |
+        source .env && \
+        echo "🔄 Starting import... " && \
+        (docker compose exec -T staging-db mysql -uroot -p"$LOOTER_STAGING_DB_PASSWORD" $LOOTER_STAGING_DB_NAME < ./staging_db_dump.sql 2>&1) && \
+        echo "✅ Import completed with success !"
+
+  staging-db:export:
+    desc: Export staging_db database into dump file
+    cmds:
+      - echo "Exporting staging_db database into staging_db_dump.sql..."
+      - |
+        source .env && \
+        echo "🔄 Starting export... " && \
+        (docker compose exec -T staging-db mysqldump --databases $LOOTER_STAGING_DB_NAME -uroot -p"$LOOTER_STAGING_DB_PASSWORD" > ./staging_db_dump.sql 2>/dev/null) && \
+        echo "✅ Export completed with success into ./staging_db_dump.sql !"

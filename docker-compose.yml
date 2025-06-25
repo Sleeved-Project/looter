@@ -18,7 +18,6 @@ services:
       MYSQL_DATABASE: ${LOOTER_SCRAP_DB_NAME}
     volumes:
       - scrap-db-data:/var/lib/mysql
-      - ./scrap_db_dump.sql:/docker-entrypoint-initdb.d/scrap_db_dump.sql
     ports:
       - "3308:3306"
     healthcheck:
@@ -46,7 +45,6 @@ services:
       MYSQL_DATABASE: ${LOOTER_STAGING_DB_NAME}
     volumes:
       - staging-db-data:/var/lib/mysql
-      - ./staging_db_dump.sql:/docker-entrypoint-initdb.d/staging_db_dump.sql
     ports:
       - "3309:3306"
     healthcheck:

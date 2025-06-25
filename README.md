@@ -1,6 +1,6 @@
 # 🚀 Looter - Spring Batch Project
 
-Projet de traitement batch développé avec **Spring Boot 3.4.5**, **Java 17**, et **MySQL** comme base de données.
+Projet de traitement batch développé avec **Spring Boot 3.4.7**, **Java 17**, et **MySQL** comme base de données.
 
 ## 📦 Prérequis
 
@@ -9,19 +9,27 @@ Projet de traitement batch développé avec **Spring Boot 3.4.5**, **Java 17**, 
 - IDE recommandé : IntelliJ IDEA / VSCode
 - Docker
 - Docker Compose
+- Taskfile [https://taskfile.dev](https://taskfile.dev)
+- Git LFS
 
-## 🛠️ Installation du projet
-
-### Cloner le dépôt
+## Clone reposotory
 
 ```bash
 git clone https://github.com/ton-utilisateur/looter.git
 cd looter
 ```
 
-### Gestion des bases internes
+## Git LFS
 
-Des fichier dump sont dipsonible à la racine du projet pour initialiser les base de données de staging et de batch. Ces fichiers devront être mis à jour à chaque batch pour garantir une persistance des données.
+Large data files are send on github with Git LFS. Git Large File Storage (LFS) replaces large files such as audio samples, videos, datasets, and graphics with text pointers inside Git, while storing the file contents on a remote server like GitHub.com or GitHub Enterprise.
+
+If you want push large file data run **before push**
+
+```bash
+git lfs push --all origin
+```
+
+## 🛠️ Project setup
 
 ### Mettre à jour les bases externe :
 
@@ -32,7 +40,7 @@ L'application de batch communique avec les base des autres service. Il est préf
 
 Une fois téléchargés, importer les dump en local ou dans les container des sevrices associés
 
-## ⚙️ Configuration de l'application
+### Configuration de l'application
 
 Le fichier `src/main/resources/application.yml` contient les configuration principales :
 
@@ -63,37 +71,59 @@ Copy-Item -Path .env.exemple -Destination .env
 
 ⚠️ Assurez-vous de ne jamais commiter ce fichier sur Git. Il est déjà configuré dans le .gitignore.
 
-## 🔨 Compilation et packaging
+### Compile and packaging
+
+Before runing application run this command
 
 ```bash
-docker compose build
+task setup
 ```
 
-💡 La nouvelle `version` du JAR sera généré dans `target/looter-<version>-SNAPSHOT.jar`.
+This command **build all images** and up **only the internal databases**
 
-## ▶️ Exécution du batch
+💡 The new JAR `version` will be generated into `target/looter-<version>-SNAPSHOT.jar`.
 
-Le script `run-job.sh` simplifie l'exécution des jobs :
+### Update internal databases
 
-Rendez le script exécutable (nécessaire uniquement la première fois)
+After compiling you need to import the internal database dump. Dump files are available at the root project to initialize the staging and batch databases.
+
+📥 Import the dataset with this command
 
 ```bash
-chmod +x run-job.sh
+task scrap-db:import
+task staging-db:import
 ```
 
-Exécutez un job en spécifiant son nom et optionnellement le profil
+These files **must be updated after each batch** to ensure data persistence.
 
 ```bash
-./run-job.sh NOM_DU_JOB [PROFIL]
+task scrap-db:export
+task staging-db:export
+```
+
+💡 The dump export will be extract into `./scrap_db_dump.sql` and `./sctaging_db_dump.sql`.
+
+‼️ Don't forget to send this dumps on github with git lfs after runing job **completed**.
+
+## ▶️ Runing batch
+
+Run a job with name and proofile arguments
+
+```bash
+task run-job JOB_NAME [PROFILE]
 ```
 
 Exemple :
 
 ```bash
-./run-job.sh scrapingCardJob local
+task run-job job=scrapingCardJob profile=local
 ```
 
-⚠️ Si vous avez modifié le code source, n'oubliez pas de compiler à nouveau
+⚠️ No hot reload id necessary for this project but if you modify source code don't forget to compile again git
+
+```bash
+task build
+```
 
 ## 🧰 Paramètres disponibles
 
@@ -134,25 +164,19 @@ mvn checkstyle:check
 
 ## 🧪 Lancer les tests
 
-Vous pouvez lancer les test soit en local
+You can run test localy with
 
 ```bash
 mvn clean test
 ```
 
-Ou via le container docker
+Or with docker (recomanded)
 
 ```bash
-./run-tests.sh
+task test
 ```
 
-Passer l'option build permet de construire le container si il n'existe pas
-
-```bash
-./run-tests.sh --build
-```
-
-💡 Nous utilisons AsserJ pour les test, les tests unitaires et d’intégration sont situés dans `src/test`.
+💡 We are using AssertJ fro unit and integration test. Tests are in `src/test`.
 
 ## 🗂 Structure du projet
 
@@ -184,9 +208,9 @@ com.sleeved.looter
 
 ## 🔧 Ajouter un nouveau job
 
-- Déclarez un bean `@Bean(name = "nomDuNouveauJob")` dans une classe de configuration Spring Batch.
-- Mettre à jour le `run-job.sh` pour afficher les job disponible
-- Documentez l’usage dans ce README.
+- Declare a bean `@Bean(name = "newJobName")` in a Spring Batch configuration class.
+- Update the `Taskfile.yml` to display the available jobs
+- Document the usage in this README.
 
 ## 📚 Ressources utiles
 
