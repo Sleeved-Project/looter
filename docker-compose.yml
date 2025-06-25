@@ -2,8 +2,8 @@ services:
   app:
     build: .
     env_file: .env
-    command: --spring.batch.job.name=${BATCH_JOB_NAME:-scrapingCardJob} --spring.profiles.active=${SPRING_PROFILES_ACTIVE:-local}
     networks:
+      - default
       - looter-network
     depends_on:
       scrap-db:
@@ -37,7 +37,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - looter-network
+      - default
 
   staging-db:
     image: mysql:8.0
@@ -65,10 +65,12 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - looter-network
+      - default
 
 networks:
+  default:
   looter-network:
+    external: true
 
 volumes:
   scrap-db-data:

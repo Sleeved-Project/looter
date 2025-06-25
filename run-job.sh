@@ -14,6 +14,6 @@ PROFILE=${2:-local}
 echo "Running job: $JOB_NAME with profile: $PROFILE"
 
 docker compose run --rm \
-  -e BATCH_JOB_NAME=$JOB_NAME \
-  -e SPRING_PROFILES_ACTIVE=$PROFILE \
-  app
+  app \
+  --spring.batch.job.name=$JOB_NAME \
+  --spring.profiles.active=$PROFILE

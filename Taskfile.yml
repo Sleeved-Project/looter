@@ -1,0 +1,71 @@
+version: "3"
+
+vars:
+  DEFAULT_PROFILE: local
+  DEFAULT_JOB: scrapingCardJob
+
+tasks:
+  default:
+    desc: Display available commands
+    cmds:
+      - task --list-all
+    silent: true
+
+  build:
+    desc: Construit l'image Docker
+    cmds:
+      - docker compose build
+
+  up-db:
+    desc: Démarre les bases de données
+    cmds:
+      - docker compose up -d looter-db staging-db sleeved-db iris-db
+
+  down:
+    desc: Arrête tous les services
+    cmds:
+      - docker compose down
+
+  run:
+    desc: Exécute un job de batch avec un profil spécifique
+    summary: |
+      Usage: task run [job=<job_name>] [profile=<profile>]
+
+      Exemples:
+        - task run
+        - task run job=hashingCardImageJob
+        - task run job=scrapingCardJob profile=dev
+    cmds:
+      - |
+        export BATCH_JOB_NAME={{.job}}
+        export SPRING_PROFILES_ACTIVE={{.profile}}
+        docker compose up
+    vars:
+      job: "{{.job | default .DEFAULT_JOB}}"
+      profile: "{{.profile | default .DEFAULT_PROFILE}}"
+
+  logs:
+    desc: Affiche les logs d'un service
+    summary: |
+      Usage: task logs service=<service_name>
+
+      Exemple:
+        - task logs service=looter-batch
+    cmds:
+      - docker compose logs -f {{.service}}
+    requires:
+      vars: [service]
+
+  list-jobs:
+    desc: Liste les jobs disponibles
+    cmds:
+      - 'echo "Jobs disponibles:"'
+      - 'echo "- hashingCardImageJob: Traitement des hashes d images"'
+      - 'echo "- scrapingCardJob: Récupération des cartes"'
+      - 'echo "- scrapingPriceJob: Récupération des prix (avec API)"'
+      - 'echo "- scrapingPriceJobWithoutApi: Récupération des prix (sans API)"'
+
+  default:
+    desc: Affiche l'aide
+    cmds:
+      - task --list
