@@ -57,6 +57,22 @@ public class ScrapingCardJobConfig {
   }
 
   @Bean
+  public Job scrapingCardJobWithoutApi(JobRepository jobRepository, Step fetchCardsStageStep,
+      Step importBaseEntitiesStep,
+      Step importSetsWeaknessResitanceStep, Step importCostAttackStep, Step importCardsStep,
+      Step linkCardRelationsStep) {
+    return new JobBuilder("scrapingCardJobWithoutApi", jobRepository)
+        .incrementer(new RunIdIncrementer())
+        .listener(scrapingCardListener)
+        .start(importBaseEntitiesStep)
+        .next(importSetsWeaknessResitanceStep)
+        .next(importCostAttackStep)
+        .next(importCardsStep)
+        .next(linkCardRelationsStep)
+        .build();
+  }
+
+  @Bean
   public Step fetchCardsStageStep(
       JobRepository jobRepository,
       PlatformTransactionManager transactionManager,
