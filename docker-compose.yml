@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    container_name: looter-app
     env_file: .env
     networks:
       - default

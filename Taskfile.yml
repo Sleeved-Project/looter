@@ -13,8 +13,8 @@ tasks:
     cmds:
       - |
         docker compose build
-        docker compose up -d scrap-db staging-db
-        echo "✅ The database services are runing, next you can:"
+        docker compose up -d
+        echo "✅ All services are running, including persistent Looter app"
         echo "  - Import database with '<service-db>:import' command."
         echo "  - Run a job with 'task run-job job=<jobName>' command."
 
@@ -29,6 +29,18 @@ tasks:
       - docker compose down
 
   # Batch Commandes
+  start:
+    desc: Start only the Looter application service
+    cmds:
+      - docker compose up -d app
+      - echo "✅ Looter application started in persistent mode"
+
+  stop:
+    desc: Stop the Looter application service
+    cmds:
+      - docker compose stop app
+      - echo "🛑 Looter application stopped"
+
   jobs:
     desc: Show jobs available in the batch application
     cmds:
@@ -38,10 +50,10 @@ tasks:
         echo "- scrapingCardJob: Scrap all cards from tcgAPI"
         echo "- scrapingPriceJob: Scrap all today prices from tcgAPI"
         echo "- scrapingPriceJobWithoutApi: Scrap all prices without using only staging database"
-    siltent: true
+    silent: true
 
   run-job:
-    desc: Run a specific job in the batch application, use `task list-jobs` to see available jobs
+    desc: Run a specific job in the batch application, use `task jobs` to see available jobs
     params:
       - name: job
         desc: Job to run
@@ -61,8 +73,8 @@ tasks:
           - test
         default: local
     cmds:
-      - echo "Run {{.job}} with {{.profile}} profile"
-      - docker compose run --rm app --spring.batch.job.name={{.job}} --spring.profiles.active={{.profile}}
+      - echo "📦 Running {{.job}} on looter-app with profile {{.profile}}..."
+      - docker exec -it looter-app java -jar app.jar --job.name={{.job}} --spring.profiles.active={{.profile}} --spring.main.web-application-type=none
 
   # Test Commandes
   test:

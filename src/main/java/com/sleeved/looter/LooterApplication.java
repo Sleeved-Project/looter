@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class LooterApplication {
 
 	public static void main(String[] args) {
-		System.exit(SpringApplication.exit(SpringApplication.run(LooterApplication.class, args)));
+        SpringApplication.run(LooterApplication.class, args);
 	}
 
 }
