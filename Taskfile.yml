@@ -125,3 +125,19 @@ tasks:
         echo "🔄 Starting export... " && \
         (docker compose exec -T staging-db mysqldump --databases $LOOTER_STAGING_DB_NAME -uroot -p"$LOOTER_STAGING_DB_PASSWORD" > ./staging_db_dump.sql 2>/dev/null) && \
         echo "✅ Export completed with success into ./staging_db_dump.sql !"
+
+  scheduler:
+    desc: Show scheduled jobs and their periodicity
+    cmds:
+      - |
+        echo "=== Scheduled Jobs (Spring Scheduler) ==="
+        echo "- scrapingPriceJob: all days at 2am"
+        echo "- scrapingCardJob: all three months at 3am"
+        echo "- hashingCardImageJob: all three months at 4am (after scrapingCardJob)"
+    silent: true
+
+  scheduler:status:
+    desc: Show last and next scheduled run for each job
+    cmds:
+      - ./scheduler_status.sh
+    silent: false
