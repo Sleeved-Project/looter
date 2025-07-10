@@ -48,8 +48,9 @@ tasks:
         echo "=== Jobs available ==="
         echo "- hashingCardImageJob: Hash all card images and save them into iris database"
         echo "- scrapingCardJob: Scrap all cards from tcgAPI"
+        echo "- scrapingCardJobWithoutApi: Scrap all cards from using only staging database"
         echo "- scrapingPriceJob: Scrap all today prices from tcgAPI"
-        echo "- scrapingPriceJobWithoutApi: Scrap all prices without using only staging database"
+        echo "- scrapingPriceJobWithoutApi: Scrap all prices using only staging database"
     silent: true
 
   run-job:
@@ -61,6 +62,7 @@ tasks:
         options:
           - hashingCardImageJob
           - scrapingCardJob
+          - scrapingCardJobWithoutApi
           - scrapingPriceJob
           - scrapingPriceJobWithoutApi
         default: scrapingPriceJob
