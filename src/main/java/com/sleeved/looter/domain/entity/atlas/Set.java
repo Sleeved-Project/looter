@@ -42,6 +42,6 @@ public class Set {
   private String imageLogo;
 
   @ManyToOne
-  @JoinColumn(name = "leaglity_id", nullable = false)
+  @JoinColumn(name = "legality_id", nullable = false)
   private Legalities legalities;
 }
