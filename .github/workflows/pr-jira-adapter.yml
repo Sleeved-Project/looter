@@ -45,7 +45,7 @@ jobs:
             if (!jiraLinkPattern.test(description)) {
               // Replace the placeholder with the actual JIRA ID
               const jiraLink = `[${jiraId}](https://sleeved.atlassian.net/browse/${jiraId})`;
-              description = description.replace(/\[LTR-XXX\]\(https:\/\/sleeved\.atlassian\.net\/browse\/LTR-XXX\)/, jiraLink);
+              description = description.replace(/\[LTR-#\]\(https:\/\/sleeved\.atlassian\.net\/browse\/LTR-#\)/, jiraLink);
               
               await github.rest.pulls.update({
                 owner: context.repo.owner,

@@ -21,8 +21,8 @@ Briefly describe the changes introduced in this pull request.
 
 ## 🔗 Related Issues
 
-Closes: [LTR-XXX](#)
-(for bug) Linked task: [LTR-XXX](#)
+Closes: [LTR-#](#)
+(for bug) Linked task: [LTR-#](#)
 
 ## 💬 Additional Comments
 
