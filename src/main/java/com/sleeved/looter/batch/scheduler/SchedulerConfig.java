@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.sleeved.looter.common.exception.LooterSchedulerException;
 import com.sleeved.looter.infra.config.JobRunnerService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,9 @@ public class SchedulerConfig {
             log.info("Triggering the '{}' job (daily)", jobName);
             jobRunnerService.runJob(jobName, "local");
         } catch (Exception e) {
-            log.error("Error while running the job '{}': {}", jobName, e.getMessage(), e);        
+            LooterSchedulerException schedulerException = new LooterSchedulerException(
+                String.format("Scheduler job '%s' (daily) failed: %s", jobName, e.getMessage()), e);
+            log.error("Error while running the job '{}': {}", jobName, schedulerException, e);        
         }
     }
 
@@ -44,7 +47,9 @@ public class SchedulerConfig {
             log.info("Triggering the '{}' job (quarterly)", jobName);
             jobRunnerService.runJob(jobName, "local");
         } catch (Exception e) {
-            log.error("Error while running the job '{}': {}", jobName, e.getMessage(), e);
+            LooterSchedulerException schedulerException = new LooterSchedulerException(
+                String.format("Scheduler job '%s' (quarterly) failed: %s", jobName, e.getMessage()), e);
+            log.error("Error while running the job '{}': {}", jobName, schedulerException.getMessage(), schedulerException);
         }
     }
 
@@ -59,7 +64,9 @@ public class SchedulerConfig {
             log.info("Triggering the '{}' job (quarterly, after scrapingCardJob)", jobName);
             jobRunnerService.runJob(jobName, "local");
         } catch (Exception e) {
-            log.error("Error while running the job '{}': {}", jobName, e.getMessage(), e);
+            LooterSchedulerException schedulerException = new LooterSchedulerException(
+                String.format("Scheduler job '%s' (quarterly, after scrapingCardJob) failed: %s", jobName, e.getMessage()), e);
+            log.error("Error while running the job '{}': {}", jobName, schedulerException.getMessage(), schedulerException);
         }
     }
 }
