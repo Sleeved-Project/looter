@@ -20,6 +20,4 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Création d'un répertoire pour les fichiers de configuration
-RUN mkdir -p /app/config
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+RUN mkdir -p /app/configuration
