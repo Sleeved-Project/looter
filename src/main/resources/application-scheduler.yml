@@ -1,0 +1,11 @@
+spring:
+  main:
+    web-application-type: servlet
+
+logging:
+  level:
+    com.sleeved.looter: INFO
+    org.springframework.scheduling: DEBUG
+
+scheduler:
+  enabled: true
