@@ -26,4 +26,30 @@ public class TcgApiResponseMock {
     return rootNode;
   }
 
+  public static JsonNode createMockCardPageWithTotal(int numberOfCards, int totalCount) {
+    ObjectNode rootNode = objectMapper.createObjectNode();
+    ArrayNode dataArray = objectMapper.createArrayNode();
+
+    for (int i = 0; i < numberOfCards; i++) {
+      ObjectNode card = objectMapper.createObjectNode();
+      card.put("id", i + 1);
+      card.put("name", "Card " + (i + 1));
+      dataArray.add(card);
+    }
+
+    rootNode.set("data", dataArray);
+    rootNode.put("pageSize", numberOfCards);
+    rootNode.put("totalCount", totalCount);
+    return rootNode;
+  }
+
+  public static JsonNode createMockEmptyCardPage() {
+    ObjectNode rootNode = objectMapper.createObjectNode();
+    ArrayNode dataArray = objectMapper.createArrayNode();
+
+    rootNode.set("data", dataArray);
+    rootNode.put("pageSize", 0);
+    rootNode.put("totalCount", 0);
+    return rootNode;
+  }
 }
