@@ -1,6 +1,7 @@
 package com.sleeved.looter.infra.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -67,16 +68,22 @@ public class TcgApiServiceTest {
 
     tcgApiService = spy(tcgApiService);
 
+    // Injection des valeurs de configuration via reflection
+    ReflectionTestUtils.setField(tcgApiService, "self", tcgApiService);
     ReflectionTestUtils.setField(tcgApiService, "apiCardPaginateEndpoint",
         "/cards?page=%d&pageSize=%d&orderBy=set.releaseDate");
     ReflectionTestUtils.setField(tcgApiService, "apiCardPaginatePricesEndpoint",
         "/cards?page=%d&pageSize=%d&orderBy=set.releaseDate&select=id,name,tcgplayer,cardmarket");
     ReflectionTestUtils.setField(tcgApiService, "apiCardPageSize", 10);
     ReflectionTestUtils.setField(tcgApiService, "apiCardPage", 1);
+    ReflectionTestUtils.setField(tcgApiService, "maxAttempts", "3");
+    ReflectionTestUtils.setField(tcgApiService, "initalDelay", "1000");
+    ReflectionTestUtils.setField(tcgApiService, "backoffMultiplier", "2.0");
+    ReflectionTestUtils.setField(tcgApiService, "maxDelay", "10000");
   }
 
   @Test
-  void fetchCardPage_shouldReturnJsonNodeData() {
+  void fetchCardPage_shouldReturnJsonNodeData_whenApiCallIsSuccessful() {
     // Given
     String apiUrl = "https://api.tcgplayer.com/cards?page=1&pageSize=10";
     HttpEntity<String> httpEntity = new HttpEntity<>(null, null);
@@ -102,7 +109,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void fetchCardPricePage_shouldReturnJsonNodeData() {
+  void fetchCardPricePage_shouldReturnJsonNodeData_whenApiCallIsSuccessful() {
     // Given
     String apiUrl = "https://api.tcgplayer.com/card?page=1&pageSize=10";
     HttpEntity<String> httpEntity = new HttpEntity<>(null, null);
@@ -128,7 +135,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void fetchAllCards_shouldProcessAllPagesSuccessfully() {
+  void processAllCardsPageByPage_shouldProcessAllPagesSuccessfully_whenDataIsAvailable() {
     // Given
     JsonNode page1 = TcgApiResponseMock.createMockCardPageWithTotal(10, 25);
     JsonNode page2 = TcgApiResponseMock.createMockCardPageWithTotal(10, 25);
@@ -152,7 +159,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void fetchAllCards_shouldStopWhenNoMoreData() {
+  void processAllCardsPageByPage_shouldStopProcessing_whenNoMoreDataIsAvailable() {
     // Given
     JsonNode page1 = TcgApiResponseMock.createMockCardPageWithTotal(10, 15);
     JsonNode emptyPage = TcgApiResponseMock.createMockEmptyCardPage();
@@ -172,7 +179,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void fetchAllCards_shouldHandleExceptions() {
+  void processAllCardsPageByPage_shouldHandleExceptionsGracefully_whenFetchingFails() {
     // Given
     doThrow(new RuntimeException("API Error")).when(tcgApiService).fetchCardPage(anyInt());
     PageProcessor processor = mock(PageProcessor.class);
@@ -190,7 +197,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void fetchAllCards_shouldPassCorrectDataToProcessor() {
+  void processAllCardsPageByPage_shouldPassCorrectDataToProcessor_whenProcessingSinglePage() {
     // Given
     JsonNode page1 = TcgApiResponseMock.createMockCardPageWithTotal(3, 3);
     doReturn(page1).when(tcgApiService).fetchCardPage(1);
@@ -212,7 +219,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void processAllCardPricesPageByPage_shouldProcessAllPagesSuccessfully() {
+  void processAllCardPricesPageByPage_shouldProcessAllPagesSuccessfully_whenDataIsAvailable() {
     // Given
     JsonNode page1 = TcgApiResponseMock.createMockCardPageWithTotal(10, 25);
     JsonNode page2 = TcgApiResponseMock.createMockCardPageWithTotal(10, 25);
@@ -236,7 +243,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void processAllCardPricesPageByPage_shouldStopWhenNoMoreData() {
+  void processAllCardPricesPageByPage_shouldStopProcessing_whenNoMoreDataIsAvailable() {
     // Given
     JsonNode page1 = TcgApiResponseMock.createMockCardPageWithTotal(10, 15);
     JsonNode emptyPage = TcgApiResponseMock.createMockEmptyCardPage();
@@ -256,7 +263,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void processAllCardPricesPageByPage_shouldHandleExceptions() {
+  void processAllCardPricesPageByPage_shouldHandleExceptionsGracefully_whenFetchingFails() {
     // Given
     doThrow(new RuntimeException("API Error")).when(tcgApiService).fetchCardPricePage(anyInt());
     PageProcessor processor = mock(PageProcessor.class);
@@ -274,7 +281,7 @@ public class TcgApiServiceTest {
   }
 
   @Test
-  void processAllCardPricesPageByPage_shouldPassCorrectDataToProcessor() {
+  void processAllCardPricesPageByPage_shouldPassCorrectDataToProcessor_whenProcessingSinglePage() {
     // Given
     JsonNode page1 = TcgApiResponseMock.createMockCardPageWithTotal(3, 3);
     doReturn(page1).when(tcgApiService).fetchCardPricePage(1);
@@ -293,5 +300,67 @@ public class TcgApiServiceTest {
     // Then
     assertThat(capturedData).hasSize(3);
     assertThat(capturedPageNumber.get()).isEqualTo(1);
+  }
+
+  @Test
+  void recoverFromFetchCardPage_shouldThrowRuntimeException_whenAllRetriesFail() {
+    // Given
+    RuntimeException originalException = new RuntimeException("API Error");
+    int page = 1;
+
+    // When & Then
+    assertThatThrownBy(() -> tcgApiService.recoverFromFetchCardPage(originalException, page))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Unable to fetch card page 1 after retries")
+        .hasCause(originalException);
+  }
+
+  @Test
+  void recoverFromFetchCardPricePage_shouldThrowRuntimeException_whenAllRetriesFail() {
+    // Given
+    RuntimeException originalException = new RuntimeException("API Error");
+    int page = 1;
+
+    // When & Then
+    assertThatThrownBy(() -> tcgApiService.recoverFromFetchCardPricePage(originalException, page))
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Unable to fetch card price page 1 after retries")
+        .hasCause(originalException);
+  }
+
+  @Test
+  void processAllCardsPageByPage_shouldThrowRuntimeException_whenResponseIsNull() {
+    // Given
+    doReturn(null).when(tcgApiService).fetchCardPage(1);
+    PageProcessor processor = mock(PageProcessor.class);
+
+    // When
+    tcgApiService.processAllCardsPageByPage(processor);
+
+    // Then
+    verify(processor, never()).processPage(any(), anyInt());
+    verify(looterScrapingErrorHandler).handle(
+        any(RuntimeException.class),
+        eq(Constantes.SERVICE_CONTEXT),
+        eq(Constantes.FETCH_DATA_ACTION),
+        eq(Constantes.TCGAPI_CARD_PAGINATE_ITEM));
+  }
+
+  @Test
+  void processAllCardPricesPageByPage_shouldThrowRuntimeException_whenResponseIsNull() {
+    // Given
+    doReturn(null).when(tcgApiService).fetchCardPricePage(1);
+    PageProcessor processor = mock(PageProcessor.class);
+
+    // When
+    tcgApiService.processAllCardPricesPageByPage(processor);
+
+    // Then
+    verify(processor, never()).processPage(any(), anyInt());
+    verify(looterScrapingErrorHandler).handle(
+        any(RuntimeException.class),
+        eq(Constantes.SERVICE_CONTEXT),
+        eq(Constantes.FETCH_DATA_ACTION),
+        eq(Constantes.TCGAPI_CARD_PAGINATE_ITEM));
   }
 }

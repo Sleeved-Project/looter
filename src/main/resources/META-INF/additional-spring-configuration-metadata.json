@@ -106,6 +106,26 @@
       "description": "Base path for TCGPlayer API version"
     },
     {
+      "name": "tcgplayer.api.retry.max-attempts",
+      "type": "java.lang.Integer",
+      "description": "Maximum number of retry attempts for TCGPlayer API requests"
+    },
+    {
+      "name": "tcgplayer.api.retry.initial-delay",
+      "type": "java.lang.Integer",
+      "description": "Initial delay in milliseconds before retrying TCGPlayer API requests"
+    },
+    {
+      "name": "tcgplayer.api.retry.backoff-multiplier",
+      "type": "java.lang.Double",
+      "description": "Multiplier for the backoff delay between retry attempts for TCGPlayer API requests"
+    },
+    {
+      "name": "tcgplayer.api.retry.max-delay",
+      "type": "java.lang.Integer",
+      "description": "Maximum delay in milliseconds for retry attempts in TCGPlayer API requests"
+    },
+    {
       "name": "tcgplayer.api.endpoints.cards.paginate",
       "type": "java.lang.String",
       "description": "Pagination endpoint format for TCGPlayer cards API"
