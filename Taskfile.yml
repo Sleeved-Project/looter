@@ -9,11 +9,11 @@ tasks:
 
   # Setup Commandes
   setup:
-    desc: Bulild images and start database services
+    desc: Build images, start database services and scheduler
     cmds:
       - |
         docker compose build
-        docker compose up -d
+        docker compose up -d scrap-db staging-db app
         echo "✅ All services are running, including persistent Looter app"
         echo "  - Import database with '<service-db>:import' command."
         echo "  - Run a job with 'task run-job job=<jobName>' command."
@@ -28,18 +28,33 @@ tasks:
     cmds:
       - docker compose down
 
-  # Batch Commandes
   start:
-    desc: Start only the Looter application service
+    desc: Start the Looter scheduler service
     cmds:
       - docker compose up -d app
-      - echo "✅ Looter application started in persistent mode"
+      - echo "✅ Looter scheduler started in persistent mode"
+
+  status:
+    desc: Check scheduler status and health
+    cmds:
+      - echo "📊 Scheduler Status:"
+      - docker compose ps app
+      - echo "🏥 Health Status:"
+      - docker inspect app --format='{{.State.Health.Status}}' 2>/dev/null || echo "Health check starting..."
+      - echo "📋 Recent logs:"
+      - docker compose logs app --tail=20
+
+  restart:
+    desc: Restart the scheduler (useful if it becomes unresponsive)
+    cmds:
+      - docker compose restart app
+      - echo "🔄 Scheduler restarted"
 
   stop:
-    desc: Stop the Looter application service
+    desc: Stop the Looter scheduler service
     cmds:
       - docker compose stop app
-      - echo "🛑 Looter application stopped"
+      - echo "🛑 Looter scheduler stopped"
 
   jobs:
     desc: Show jobs available in the batch application
@@ -75,8 +90,8 @@ tasks:
           - test
         default: local
     cmds:
-      - echo "📦 Running {{.job}} on looter-app with profile {{.profile}}..."
-      - docker exec -it looter-app java -jar app.jar --job.name={{.job}} --spring.profiles.active={{.profile}} --spring.main.web-application-type=none
+      - echo "📦 Running {{.job}} with profile {{.profile}} using job-runner..."
+      - docker compose run --rm job-runner java -jar app.jar --job.name={{.job}} --spring.profiles.active={{.profile}} --spring.main.web-application-type=none
 
   # Test Commandes
   test:
@@ -125,3 +140,19 @@ tasks:
         echo "🔄 Starting export... " && \
         (docker compose exec -T staging-db mysqldump --databases $LOOTER_STAGING_DB_NAME -uroot -p"$LOOTER_STAGING_DB_PASSWORD" > ./staging_db_dump.sql 2>/dev/null) && \
         echo "✅ Export completed with success into ./staging_db_dump.sql !"
+
+  scheduler:
+    desc: Show scheduled jobs and their periodicity
+    cmds:
+      - |
+        echo "=== Scheduled Jobs (Spring Scheduler) ==="
+        echo "- scrapingPriceJob: all days at 2am"
+        echo "- scrapingCardJob: all three months at 3am"
+        echo "- hashingCardImageJob: all three months at 4am (after scrapingCardJob)"
+    silent: true
+
+  scheduler:status:
+    desc: Show last and next scheduled run for each job
+    cmds:
+      - ./scheduler_status.sh
+    silent: false

@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    container_name: looter-app
     env_file: .env
     networks:
       - default
@@ -11,7 +10,25 @@ services:
         condition: service_healthy
       staging-db:
         condition: service_healthy
-    command: ["java", "-jar", "app.jar"]
+    command:
+      ["java", "-jar", "app.jar", "--spring.profiles.active=local,scheduler"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # Service séparé pour les jobs one-shot
+  job-runner:
+    build: .
+    env_file: .env
+    networks:
+      - default
+      - looter-network
+    depends_on:
+      scrap-db:
+        condition: service_healthy
+      staging-db:
+        condition: service_healthy
+    profiles:
+      - job # Service utilisé seulement pour les jobs
 
   scrap-db:
     image: mysql:8.0
