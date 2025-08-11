@@ -2,12 +2,11 @@ package com.sleeved.looter.batch.scheduler;
 
 import java.time.LocalDate;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.sleeved.looter.common.exception.LooterSchedulerException;
-import com.sleeved.looter.infra.service.DockerJobLauncherService;
+import com.sleeved.looter.infra.config.JobRunnerService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "scheduler.enabled", havingValue = "true")
 public class SchedulerConfig {
 
     private final JobExecutionCheckerService jobExecutionCheckerService;
-    private final DockerJobLauncherService dockerJobLauncherService;
+    private final JobRunnerService jobRunnerService;
 
     @Scheduled(cron = "0 0 2 * * *") // all days at 2am
     public void triggerScrapingPriceJob() {
@@ -30,7 +28,7 @@ public class SchedulerConfig {
         }
         try {
             log.info("Triggering the '{}' job (daily)", jobName);
-            dockerJobLauncherService.runJobInEphemeralContainer(jobName, "local");
+            jobRunnerService.runJob(jobName, "local");
         } catch (Exception e) {
             LooterSchedulerException schedulerException = new LooterSchedulerException(
                 String.format("Scheduler job '%s' (daily) failed: %s", jobName, e.getMessage()), e);
@@ -47,7 +45,7 @@ public class SchedulerConfig {
         }
         try {
             log.info("Triggering the '{}' job (quarterly)", jobName);
-            dockerJobLauncherService.runJobInEphemeralContainer(jobName, "local");
+            jobRunnerService.runJob(jobName, "local");
         } catch (Exception e) {
             LooterSchedulerException schedulerException = new LooterSchedulerException(
                 String.format("Scheduler job '%s' (quarterly) failed: %s", jobName, e.getMessage()), e);
@@ -64,7 +62,7 @@ public class SchedulerConfig {
         }
         try {
             log.info("Triggering the '{}' job (quarterly, after scrapingCardJob)", jobName);
-            dockerJobLauncherService.runJobInEphemeralContainer(jobName, "local");
+            jobRunnerService.runJob(jobName, "local");
         } catch (Exception e) {
             LooterSchedulerException schedulerException = new LooterSchedulerException(
                 String.format("Scheduler job '%s' (quarterly, after scrapingCardJob) failed: %s", jobName, e.getMessage()), e);
