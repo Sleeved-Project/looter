@@ -19,36 +19,36 @@ import com.sleeved.looter.infra.service.TcgApiService;
 @Component
 public class FetchAndStageCardsTasklet implements Tasklet {
 
-    private final LooterScrapingErrorHandler looterScrapingErrorHandler;
+  private final LooterScrapingErrorHandler looterScrapingErrorHandler;
 
-    private final TcgApiService tcgApiService;
-    private final StagingCardRepository stagingCardRepo;
-    private final StagingCardMapper stagingCardMapper;
+  private final TcgApiService tcgApiService;
+  private final StagingCardRepository stagingCardRepo;
+  private final StagingCardMapper stagingCardMapper;
 
-    public FetchAndStageCardsTasklet(TcgApiService tcgApiService, StagingCardRepository stagingCardRepo,
-            StagingCardMapper stagingCardMapper, LooterScrapingErrorHandler looterScrapingErrorHandler) {
-        this.tcgApiService = tcgApiService;
-        this.stagingCardRepo = stagingCardRepo;
-        this.stagingCardMapper = stagingCardMapper;
-        this.looterScrapingErrorHandler = looterScrapingErrorHandler;
+  public FetchAndStageCardsTasklet(TcgApiService tcgApiService, StagingCardRepository stagingCardRepo,
+      StagingCardMapper stagingCardMapper, LooterScrapingErrorHandler looterScrapingErrorHandler) {
+    this.tcgApiService = tcgApiService;
+    this.stagingCardRepo = stagingCardRepo;
+    this.stagingCardMapper = stagingCardMapper;
+    this.looterScrapingErrorHandler = looterScrapingErrorHandler;
+  }
+
+  @Override
+  public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
+    try {
+      Long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getId();
+      LocalDateTime now = LocalDateTime.now();
+
+      tcgApiService.processAllCardsPageByPage((pageData, pageNumber) -> {
+        List<StagingCard> entities = stagingCardMapper.toEntities(pageData, jobId, now);
+        stagingCardRepo.saveAll(entities);
+      });
+
+      return RepeatStatus.FINISHED;
+    } catch (Exception e) {
+      looterScrapingErrorHandler.handle(e, Constantes.STAGE_CARD_TASKLET_CONTEXT, Constantes.EXECUTE_ACTION,
+          Constantes.STAGING_CARD_ITEM);
+      return RepeatStatus.FINISHED;
     }
-
-    @Override
-    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) {
-        try {
-            Long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getId();
-            LocalDateTime now = LocalDateTime.now();
-
-            tcgApiService.processAllCardsPageByPage((pageData, pageNumber) -> {
-                List<StagingCard> entities = stagingCardMapper.toEntities(pageData, jobId, now);
-                stagingCardRepo.saveAll(entities);
-            });
-
-            return RepeatStatus.FINISHED;
-        } catch (Exception e) {
-            looterScrapingErrorHandler.handle(e, Constantes.STAGE_CARD_TASKLET_CONTEXT, Constantes.EXECUTE_ACTION,
-                    Constantes.STAGING_CARD_ITEM);
-            return RepeatStatus.FINISHED;
-        }
-    }
+  }
 }

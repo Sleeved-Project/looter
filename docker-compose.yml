@@ -14,13 +14,6 @@ services:
       ["java", "-jar", "app.jar", "--spring.profiles.active=local,scheduler"]
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "pgrep", "-f", "java"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
   # Service séparé pour les jobs one-shot
   job-runner:

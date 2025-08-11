@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.sleeved.looter.infra.service.DockerJobLauncherService;
+import com.sleeved.looter.infra.config.JobRunnerService;
 
 @ExtendWith(MockitoExtension.class)
 class SchedulerConfigTest {
@@ -24,11 +24,11 @@ class SchedulerConfigTest {
     @Mock
     private JobExecutionCheckerService jobExecutionCheckerService;
 
-    @Mock
-    private DockerJobLauncherService dockerJobLauncherService;
-
     @InjectMocks
     private SchedulerConfig schedulerConfig;
+
+    @Mock
+    private JobRunnerService jobRunnerService;
 
     @Test
     void triggerScrapingPriceJob_shouldSkipExecution_whenJobAlreadyCompletedToday() throws Exception {
@@ -40,7 +40,7 @@ class SchedulerConfigTest {
         schedulerConfig.triggerScrapingPriceJob();
 
         // Then
-        verify(dockerJobLauncherService, never()).runJobInEphemeralContainer(any(), any());
+        verify(jobRunnerService, never()).runJob(any(), any());
     }
 
     @Test
@@ -48,13 +48,13 @@ class SchedulerConfigTest {
         // Given
         when(jobExecutionCheckerService.isJobCompletedOnDate(eq("scrapingPriceJob"), any(LocalDate.class)))
             .thenReturn(false);
-        doNothing().when(dockerJobLauncherService).runJobInEphemeralContainer("scrapingPriceJob", "local");
+        doNothing().when(jobRunnerService).runJob("scrapingPriceJob", "local");
 
         // When
         schedulerConfig.triggerScrapingPriceJob();
 
         // Then
-        verify(dockerJobLauncherService).runJobInEphemeralContainer("scrapingPriceJob", "local");
+        verify(jobRunnerService).runJob("scrapingPriceJob", "local");
     }
 
     @Test
@@ -63,12 +63,12 @@ class SchedulerConfigTest {
         when(jobExecutionCheckerService.isJobCompletedOnDate(eq("scrapingPriceJob"), any(LocalDate.class)))
             .thenReturn(false);
         doThrow(new RuntimeException("Docker container failed"))
-            .when(dockerJobLauncherService).runJobInEphemeralContainer("scrapingPriceJob", "local");
+            .when(jobRunnerService).runJob("scrapingPriceJob", "local");
 
         // When & Then - Should not throw exception, but log it
         schedulerConfig.triggerScrapingPriceJob();
 
-        verify(dockerJobLauncherService).runJobInEphemeralContainer("scrapingPriceJob", "local");
+        verify(jobRunnerService).runJob("scrapingPriceJob", "local");
     }
 
     @Test
@@ -81,7 +81,7 @@ class SchedulerConfigTest {
         schedulerConfig.triggerScrapingCardJob();
 
         // Then
-        verify(dockerJobLauncherService, never()).runJobInEphemeralContainer(any(), any());
+        verify(jobRunnerService, never()).runJob(any(), any());
     }
 
     @Test
@@ -89,13 +89,13 @@ class SchedulerConfigTest {
         // Given
         when(jobExecutionCheckerService.isJobCompletedOnDate(eq("scrapingCardJob"), any(LocalDate.class)))
             .thenReturn(false);
-        doNothing().when(dockerJobLauncherService).runJobInEphemeralContainer("scrapingCardJob", "local");
+        doNothing().when(jobRunnerService).runJob("scrapingCardJob", "local");
 
         // When
         schedulerConfig.triggerScrapingCardJob();
 
         // Then
-        verify(dockerJobLauncherService).runJobInEphemeralContainer("scrapingCardJob", "local");
+        verify(jobRunnerService).runJob("scrapingCardJob", "local");
     }
 
     @Test
@@ -104,12 +104,12 @@ class SchedulerConfigTest {
         when(jobExecutionCheckerService.isJobCompletedOnDate(eq("scrapingCardJob"), any(LocalDate.class)))
             .thenReturn(false);
         doThrow(new RuntimeException("Docker container failed"))
-            .when(dockerJobLauncherService).runJobInEphemeralContainer("scrapingCardJob", "local");
+            .when(jobRunnerService).runJob("scrapingCardJob", "local");
 
         // When & Then - Should not throw exception, but log it
         schedulerConfig.triggerScrapingCardJob();
 
-        verify(dockerJobLauncherService).runJobInEphemeralContainer("scrapingCardJob", "local");
+        verify(jobRunnerService).runJob("scrapingCardJob", "local");
     }
 
     @Test
@@ -122,7 +122,7 @@ class SchedulerConfigTest {
         schedulerConfig.triggerHashingCardImageJob();
 
         // Then
-        verify(dockerJobLauncherService, never()).runJobInEphemeralContainer(any(), any());
+        verify(jobRunnerService, never()).runJob(any(), any());
     }
 
     @Test
@@ -130,13 +130,13 @@ class SchedulerConfigTest {
         // Given
         when(jobExecutionCheckerService.isJobCompletedOnDate(eq("hashingCardImageJob"), any(LocalDate.class)))
             .thenReturn(false);
-        doNothing().when(dockerJobLauncherService).runJobInEphemeralContainer("hashingCardImageJob", "local");
+        doNothing().when(jobRunnerService).runJob("hashingCardImageJob", "local");
 
         // When
         schedulerConfig.triggerHashingCardImageJob();
 
         // Then
-        verify(dockerJobLauncherService).runJobInEphemeralContainer("hashingCardImageJob", "local");
+        verify(jobRunnerService).runJob("hashingCardImageJob", "local");
     }
 
     @Test
@@ -145,11 +145,11 @@ class SchedulerConfigTest {
         when(jobExecutionCheckerService.isJobCompletedOnDate(eq("hashingCardImageJob"), any(LocalDate.class)))
             .thenReturn(false);
         doThrow(new RuntimeException("Docker container failed"))
-            .when(dockerJobLauncherService).runJobInEphemeralContainer("hashingCardImageJob", "local");
+            .when(jobRunnerService).runJob("hashingCardImageJob", "local");
 
         // When & Then - Should not throw exception, but log it
         schedulerConfig.triggerHashingCardImageJob();
 
-        verify(dockerJobLauncherService).runJobInEphemeralContainer("hashingCardImageJob", "local");
+        verify(jobRunnerService).runJob("hashingCardImageJob", "local");
     }
 }
