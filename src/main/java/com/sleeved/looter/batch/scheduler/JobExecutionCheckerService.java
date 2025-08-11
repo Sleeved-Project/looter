@@ -45,19 +45,6 @@ public class JobExecutionCheckerService {
     }
 
     /**
-     * Retrieves the last successful execution of a job
-     */
-    public JobExecution getLastSuccessfulExecution(String jobName) {
-        List<JobInstance> jobInstances = jobExplorer.findJobInstancesByJobName(jobName, 0, 5);
-
-        return jobInstances.stream()
-                .flatMap(jobInstance -> jobExplorer.getJobExecutions(jobInstance).stream())
-                .filter(execution -> execution.getStatus() == BatchStatus.COMPLETED)
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
      * Verify if a job execution is completed on a specific date
      */
     private boolean isExecutionCompletedOnDate(JobExecution execution, LocalDate targetDate) {
