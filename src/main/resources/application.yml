@@ -30,6 +30,9 @@ logging:
     com:
       sleeved:
         looter: DEBUG
+    org:
+      springframework:
+        retry: DEBUG
 
 looter:
   batch:
@@ -69,6 +72,11 @@ tcgplayer:
       protocole: https
       domain: api.pokemontcg.io
       base: v2
+    retry:
+      max-attempts: 3
+      initial-delay: 1000
+      backoff-multiplier: 2.0
+      max-delay: 10000
     endpoints:
       cards:
         paginate: cards?page=%d&pageSize=%d&orderBy=set.releaseDate
