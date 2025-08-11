@@ -9,7 +9,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.sleeved.looter.common.util.Constantes;
 import com.sleeved.looter.domain.entity.staging.StagingCard;
 import com.sleeved.looter.domain.repository.staging.StagingCardRepository;
@@ -40,11 +39,10 @@ public class FetchAndStageCardsTasklet implements Tasklet {
       Long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getId();
       LocalDateTime now = LocalDateTime.now();
 
-      List<JsonNode> cards = tcgApiService.fetchAllCards();
-
-      List<StagingCard> entities = stagingCardMapper.toEntities(cards, jobId, now);
-
-      stagingCardRepo.saveAll(entities);
+      tcgApiService.processAllCardsPageByPage((pageData, pageNumber) -> {
+        List<StagingCard> entities = stagingCardMapper.toEntities(pageData, jobId, now);
+        stagingCardRepo.saveAll(entities);
+      });
 
       return RepeatStatus.FINISHED;
     } catch (Exception e) {

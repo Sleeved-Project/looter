@@ -41,9 +41,8 @@ public class TcgApiService {
     this.tcgApiRequestFactory = tcgApiRequestFactory;
   }
 
-  public List<JsonNode> fetchAllCards() {
+  public void processAllCardsPageByPage(PageProcessor processor) {
     int page = apiCardPage;
-    List<JsonNode> allCards = new ArrayList<>();
 
     while (true) {
       try {
@@ -59,9 +58,13 @@ public class TcgApiService {
           break;
         }
 
+        List<JsonNode> cardsPage = new ArrayList<>();
         for (JsonNode card : cards) {
-          allCards.add(card);
+          cardsPage.add(card);
         }
+
+        // Traiter cette page via le callback
+        processor.processPage(cardsPage, page);
 
         int total = root.path("totalCount").asInt();
         if (page * apiCardPageSize >= total) {
@@ -76,13 +79,10 @@ public class TcgApiService {
         break;
       }
     }
-
-    return allCards;
   }
 
-  public List<JsonNode> fetchAllCardPrices() {
+  public void processAllCardPricesPageByPage(PageProcessor processor) {
     int page = apiCardPage;
-    List<JsonNode> allCardPrices = new ArrayList<>();
 
     while (true) {
       try {
@@ -98,9 +98,13 @@ public class TcgApiService {
           break;
         }
 
+        List<JsonNode> cardPricesPage = new ArrayList<>();
         for (JsonNode cardPrice : cardPrices) {
-          allCardPrices.add(cardPrice);
+          cardPricesPage.add(cardPrice);
         }
+
+        // Traiter cette page via le callback
+        processor.processPage(cardPricesPage, page);
 
         int total = root.path("totalCount").asInt();
         if (page * apiCardPageSize >= total) {
@@ -115,8 +119,6 @@ public class TcgApiService {
         break;
       }
     }
-
-    return allCardPrices;
   }
 
   protected JsonNode fetchCardPage(int page) {
@@ -129,7 +131,7 @@ public class TcgApiService {
     return response.getBody();
   }
 
-  protected JsonNode fetchCardPricePage(int page) {
+  public JsonNode fetchCardPricePage(int page) {
     String apiUrl = tcgApiUrlBuilder.buildPaginatedUrl(apiCardPaginatePricesEndpoint, page, apiCardPageSize);
     log.info("Fetching card prices from TCG API: {}", apiUrl);
     ResponseEntity<JsonNode> response = restTemplate.exchange(apiUrl, HttpMethod.GET,
@@ -137,6 +139,12 @@ public class TcgApiService {
         JsonNode.class);
     log.info("Response status code: {}", response.getStatusCode());
     return response.getBody();
+  }
+
+  // Interface fonctionnelle pour le traitement de page
+  @FunctionalInterface
+  public interface PageProcessor {
+    void processPage(List<JsonNode> pageData, int pageNumber);
   }
 
 }

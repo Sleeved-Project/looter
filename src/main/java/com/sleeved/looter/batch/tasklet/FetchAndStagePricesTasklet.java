@@ -9,7 +9,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.sleeved.looter.common.util.Constantes;
 import com.sleeved.looter.domain.entity.staging.StagingPrice;
 import com.sleeved.looter.domain.repository.staging.StagingPriceRepository;
@@ -17,7 +16,10 @@ import com.sleeved.looter.infra.mapper.StagingPriceMapper;
 import com.sleeved.looter.infra.service.LooterScrapingErrorHandler;
 import com.sleeved.looter.infra.service.TcgApiService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class FetchAndStagePricesTasklet implements Tasklet {
 
   private final LooterScrapingErrorHandler looterScrapingErrorHandler;
@@ -40,11 +42,10 @@ public class FetchAndStagePricesTasklet implements Tasklet {
       Long jobId = chunkContext.getStepContext().getStepExecution().getJobExecution().getId();
       LocalDateTime now = LocalDateTime.now();
 
-      List<JsonNode> cardPrices = tcgApiService.fetchAllCardPrices();
-
-      List<StagingPrice> entities = stagingPriceMapper.toEntities(cardPrices, jobId, now);
-
-      stagingPriceRepo.saveAll(entities);
+      tcgApiService.processAllCardPricesPageByPage((pageData, pageNumber) -> {
+        List<StagingPrice> entities = stagingPriceMapper.toEntities(pageData, jobId, now);
+        stagingPriceRepo.saveAll(entities);
+      });
 
       return RepeatStatus.FINISHED;
     } catch (Exception e) {
