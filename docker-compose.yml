@@ -33,7 +33,9 @@ services:
   scrap-db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${LOOTER_SCRAP_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${LOOTER_SCRAP_DB_ROOT_PASSWORD}
+      MYSQL_USER: ${LOOTER_SCRAP_DB_USERNAME}
+      MYSQL_PASSWORD: ${LOOTER_SCRAP_DB_PASSWORD}
       MYSQL_DATABASE: ${LOOTER_SCRAP_DB_NAME}
     volumes:
       - scrap-db-data:/var/lib/mysql
@@ -60,7 +62,9 @@ services:
   staging-db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: ${LOOTER_STAGING_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${LOOTER_STAGING_DB__ROOT_PASSWORD}
+      MYSQL_USER: ${LOOTER_STAGING_DB_USERNAME}
+      MYSQL_PASSWORD: ${LOOTER_STAGING_DB_PASSWORD}
       MYSQL_DATABASE: ${LOOTER_STAGING_DB_NAME}
     volumes:
       - staging-db-data:/var/lib/mysql

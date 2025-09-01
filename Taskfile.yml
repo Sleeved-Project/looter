@@ -23,6 +23,11 @@ tasks:
     cmds:
       - docker compose build
 
+  build-job-runner:
+    desc: Build docker images
+    cmds:
+      - docker compose build --no-cache job-runner
+
   down:
     desc: Stop all services
     cmds:
@@ -108,18 +113,18 @@ tasks:
       - |
         source .env && \
         echo "🔄 Starting import... " && \
-        (docker compose exec -T scrap-db mysql -uroot -p"$LOOTER_SCRAP_DB_PASSWORD" $LOOTER_SCRAP_DB_NAME < ./scrap_db_dump.sql 2>&1) && \
+        (docker compose exec -T scrap-db mysql -uroot -p"$LOOTER_SCRAP_DB_PASSWORD" $LOOTER_SCRAP_DB_NAME < ./scrap_db_structure_dump.sql 2>&1) && \
         echo "✅ Import completed with success !"
 
   scrap-db:export:
     desc: Export scrap_db database into dump file
     cmds:
-      - echo "Exporting scrap_db database into scrap_db_dump.sql..."
+      - echo "Exporting scrap_db database into scrap_db_structure_dump.sql..."
       - |
         source .env && \
         echo "🔄 Starting export... " && \
-        (docker compose exec -T scrap-db mysqldump --databases $LOOTER_SCRAP_DB_NAME -uroot -p"$LOOTER_SCRAP_DB_PASSWORD" > ./scrap_db_dump.sql 2>/dev/null) && \
-        echo "✅ Export completed with success into ./scrap_db_dump.sql !"
+        (docker compose exec -T scrap-db mysqldump --databases $LOOTER_SCRAP_DB_NAME -uroot -p"$LOOTER_SCRAP_DB_PASSWORD" > ./scrap_db_data_dump.sql 2>/dev/null) && \
+        echo "✅ Export completed with success into ./scrap_db_data_dump.sql !"
 
   staging-db:import:
     desc: Import staging_db database from dump file
@@ -128,18 +133,18 @@ tasks:
       - |
         source .env && \
         echo "🔄 Starting import... " && \
-        (docker compose exec -T staging-db mysql -uroot -p"$LOOTER_STAGING_DB_PASSWORD" $LOOTER_STAGING_DB_NAME < ./staging_db_dump.sql 2>&1) && \
+        (docker compose exec -T staging-db mysql -uroot -p"$LOOTER_STAGING_DB_PASSWORD" $LOOTER_STAGING_DB_NAME < ./staging_db_strucutre_dump.sql 2>&1) && \
         echo "✅ Import completed with success !"
 
   staging-db:export:
     desc: Export staging_db database into dump file
     cmds:
-      - echo "Exporting staging_db database into staging_db_dump.sql..."
+      - echo "Exporting staging_db database into staging_db_strucutre_dump.sql..."
       - |
         source .env && \
         echo "🔄 Starting export... " && \
-        (docker compose exec -T staging-db mysqldump --databases $LOOTER_STAGING_DB_NAME -uroot -p"$LOOTER_STAGING_DB_PASSWORD" > ./staging_db_dump.sql 2>/dev/null) && \
-        echo "✅ Export completed with success into ./staging_db_dump.sql !"
+        (docker compose exec -T staging-db mysqldump --databases $LOOTER_STAGING_DB_NAME -uroot -p"$LOOTER_STAGING_DB_PASSWORD" > ./staging_db_data_dump.sql 2>/dev/null) && \
+        echo "✅ Export completed with success into ./staging_db_data_dump.sql !"
 
   scheduler:
     desc: Show scheduled jobs and their periodicity
