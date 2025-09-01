@@ -4,7 +4,6 @@ spring:
 
 logging:
   level:
-    com.sleeved.looter: INFO
     org.springframework.scheduling: DEBUG
 
 scheduler:
