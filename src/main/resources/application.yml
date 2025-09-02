@@ -36,7 +36,7 @@ logging:
 
 looter:
   batch:
-    chunksize: 10
+    chunksize: ${LOOTER_BATCH_CHUNK_SIZE}
   staging:
     datasource:
       jdbc-url: ${LOOTER_STAGING_JDBC_URL}
@@ -59,19 +59,19 @@ iris:
     driver-class-name: com.mysql.cj.jdbc.Driver
   api:
     url:
-      protocole: http
-      domain: iris-api:8083
-      base: api/v1
+      protocole: ${IRIS_API_PROTOCOLE}
+      domain: ${IRIS_API_DOMAIN_URL}
+      base: ${IRIS_API_BASE_URL}
       endpoint:
-        hash: images/hash/url
+        hash: ${IRIS_API_ENDPOINT_HASH}
 
 tcgplayer:
   api:
     key: ${TCGPLAYER_API_KEY}
     url:
-      protocole: https
-      domain: api.pokemontcg.io
-      base: v2
+      protocole: ${TCG_API_PROTOCOLE}
+      domain: ${TCG_API_DOMAIN_URL}
+      base: ${TCG_API_BASE_URL}
     retry:
       max-attempts: 3
       initial-delay: 1000
@@ -82,4 +82,4 @@ tcgplayer:
         paginate: cards?page=%d&pageSize=%d&orderBy=set.releaseDate
         paginate-prices: cards?page=%d&pageSize=%d&orderBy=set.releaseDate&select=id,name,tcgplayer,cardmarket
         pagesize: 200
-        page: 1
+        page: ${TCG_API_INTIAL_PAGE}

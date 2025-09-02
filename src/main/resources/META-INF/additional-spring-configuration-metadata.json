@@ -144,6 +144,16 @@
       "name": "tcgplayer.api.endpoints.cards.page",
       "type": "java.lang.Integer",
       "description": "Page number for TCGPlayer cards API"
+    },
+    {
+      "name": "scheduler.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Scheduler enablement flag"
+    },
+    {
+      "name": "logging.level.org.springframework.scheduling",
+      "type": "java.lang.String",
+      "description": "Log level for Spring scheduling components"
     }
   ]
 }
