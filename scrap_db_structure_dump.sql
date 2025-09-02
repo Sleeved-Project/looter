@@ -113,6 +113,24 @@ CREATE TABLE
     UNIQUE KEY `UNIQUE_KEY_UN` (`UNIQUE_KEY`)
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 
+INSERT INTO
+  `BATCH_JOB_EXECUTION_SEQ` (`ID`, `UNIQUE_KEY`)
+select
+  *
+from
+  (
+    select
+      0 as ID,
+      '0' as `UNIQUE_KEY`
+  ) as tmp
+where
+  not exists (
+    select
+      *
+    from
+      `BATCH_JOB_EXECUTION_SEQ`
+  );
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -151,6 +169,24 @@ CREATE TABLE
     `UNIQUE_KEY` char(1) NOT NULL,
     UNIQUE KEY `UNIQUE_KEY_UN` (`UNIQUE_KEY`)
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+INSERT INTO
+  `BATCH_JOB_SEQ` (`ID`, `UNIQUE_KEY`)
+select
+  *
+from
+  (
+    select
+      0 as ID,
+      '0' as `UNIQUE_KEY`
+  ) as tmp
+where
+  not exists (
+    select
+      *
+    from
+      `BATCH_JOB_SEQ`
+  );
 
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -226,6 +262,24 @@ CREATE TABLE
     `UNIQUE_KEY` char(1) NOT NULL,
     UNIQUE KEY `UNIQUE_KEY_UN` (`UNIQUE_KEY`)
   ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
+
+INSERT INTO
+  `BATCH_STEP_EXECUTION_SEQ` (`ID`, `UNIQUE_KEY`)
+select
+  *
+from
+  (
+    select
+      0 as ID,
+      '0' as `UNIQUE_KEY`
+  ) as tmp
+where
+  not exists (
+    select
+      *
+    from
+      `BATCH_STEP_EXECUTION_SEQ`
+  );
 
 /*!40101 SET character_set_client = @saved_cs_client */;
 
