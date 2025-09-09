@@ -19,7 +19,7 @@ public class SchedulerConfig {
     private final JobExecutionCheckerService jobExecutionCheckerService;
     private final JobRunnerService jobRunnerService;
 
-    @Scheduled(cron = "0 0 9 * * *") // all days at 2am
+    @Scheduled(cron = "0 0 9 * * *") // every day at 9am
     public void triggerScrapingPriceJob() {
         String jobName = "scrapingPriceJob";
         if (jobExecutionCheckerService.isJobCompletedOnDate(jobName, LocalDate.now())) {
@@ -36,7 +36,7 @@ public class SchedulerConfig {
         }
     }
 
-    @Scheduled(cron = "0 30 9 1 1,4,7,10 *") // all three months at 3am
+    @Scheduled(cron = "0 30 9 1 1,4,7,10 *") // quarterly (Jan/Apr/Jul/Oct) on 1st at 9:30am
     public void triggerScrapingCardJob() {
         String jobName = "scrapingCardJob";
         if (jobExecutionCheckerService.isJobCompletedOnDate(jobName, LocalDate.now())) {
@@ -54,7 +54,7 @@ public class SchedulerConfig {
         }
     }
 
-    @Scheduled(cron = "0 0 10 1 1,4,7,10 *") // all three months at 4am
+    @Scheduled(cron = "0 0 10 1 1,4,7,10 *") // quarterly (Jan/Apr/Jul/Oct) on 1st at 10am
     public void triggerHashingCardImageJob() {
         String jobName = "hashingCardImageJob";
         if (jobExecutionCheckerService.isJobCompletedOnDate(jobName, LocalDate.now())) {
