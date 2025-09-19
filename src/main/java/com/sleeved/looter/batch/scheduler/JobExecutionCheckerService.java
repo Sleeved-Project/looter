@@ -32,14 +32,14 @@ public class JobExecutionCheckerService {
                     .anyMatch(execution -> isExecutionCompletedOnDate(execution, date));
 
             if (found)
-                log.debug("✅ Job '{}' found completed on {}", jobName, date);
+                log.info("Job '{}' found completed on {}", jobName, date);
             else
-                log.debug("❌ No completed execution found for job '{}' on {}", jobName, date);
+                log.warn("No completed execution found for job '{}' on {}", jobName, date);
 
             return found;
 
         } catch (Exception e) {
-            log.error("❌ Error while checking job '{}' : {}", jobName, e.getMessage());
+            log.error("Error while checking job '{}' : {}", jobName, e.getMessage());
             return false;
         }
     }

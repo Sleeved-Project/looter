@@ -16,14 +16,14 @@ public class ApplicationLifecycleManager implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("🚀 Looter Application launched");
-        
-        // Mode job : application éphémère
+
+        // Manual job mode
         if ("none".equals(webApplicationType)) {
             log.info("Running in job mode - application will terminate after job completion");
             return;
         }
-        
-        // Mode service : application persistante
+
+        // Scheduler mode
         log.info("📡 Running in service mode - application ready to receive requests");
         new CountDownLatch(1).await();
     }
