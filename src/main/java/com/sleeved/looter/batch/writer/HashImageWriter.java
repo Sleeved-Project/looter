@@ -43,9 +43,7 @@ public class HashImageWriter implements ItemWriter<HashCard> {
   private void writeIndividually(Chunk<? extends HashCard> chunk) {
     for (HashCard hashCard : chunk) {
       try {
-        if (hashCard != null && hashCard.getHash() != null) {
-          hashCardService.save(hashCard);
-        }
+        hashCardService.save(hashCard);
       } catch (Exception e) {
         String formatedItem = looterScrapingErrorHandler.formatErrorItem(
             Constantes.HASH_IMAGE_ITEM,
