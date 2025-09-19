@@ -32,6 +32,7 @@ public class HashImageWriter implements ItemWriter<HashCard> {
     try {
       if (!chunk.isEmpty()) {
         hashCardService.saveAll(chunk.getItems().stream().collect(Collectors.toList()));
+        log.info("Successfully saved {} HashCards in batch", chunk.size());
       }
     } catch (Exception e) {
       log.warn("Batch save failed, falling back to individual saves", e);

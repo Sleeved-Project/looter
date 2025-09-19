@@ -41,7 +41,6 @@ class CardImageDTOToHashCardProcessorTest {
 
     @Test
     void process_ShouldMapHashCard_WhenCardIsNew() throws Exception {
-        // given
         CardImageDTO dto = CardImageDTOMock.createCardImageDTO("http://img.jpg");
         JsonNode response = objectMapper.createObjectNode().put("hash", "abc");
         HashCard expected = HashCardMock.createMock(dto.getCardId(), "abc");
@@ -50,10 +49,8 @@ class CardImageDTOToHashCardProcessorTest {
         when(irisApiService.fetchHashImage(dto.getImageUrl())).thenReturn(response);
         when(mapper.toHashCard(dto, response)).thenReturn(expected);
 
-        // when
         HashCard result = processor.process(dto);
 
-        // then
         assertThat(result).isEqualTo(expected);
         verify(repo).existsById(dto.getCardId());
         verify(irisApiService).fetchHashImage(dto.getImageUrl());
@@ -62,14 +59,11 @@ class CardImageDTOToHashCardProcessorTest {
 
     @Test
     void process_ShouldReturnNull_WhenCardAlreadyExists() {
-        // given
         CardImageDTO dto = CardImageDTOMock.createCardImageDTO("http://img.jpg");
         when(repo.existsById(dto.getCardId())).thenReturn(true);
 
-        // when
         HashCard result = processor.process(dto);
 
-        // then
         assertThat(result).isNull();
         verify(repo).existsById(dto.getCardId());
         verifyNoInteractions(irisApiService);
