@@ -28,7 +28,7 @@ public class HashImageWriter implements ItemWriter<HashCard> {
   }
 
   @Override
-  public void write(Chunk<? extends HashCard> chunk) {
+  public void write(Chunk<? extends HashCard> chunk) throws Exception {
     try {
       if (!chunk.isEmpty()) {
         hashCardService.saveAll(chunk.getItems().stream().collect(Collectors.toList()));
