@@ -41,13 +41,12 @@ public class CardImageDTOToHashCardProcessor
       return null;
     }
 
-    // Check if the hash already exists in the repository
-    HashCard existingHashCard = hashCardRepository.findById(item.getCardId()).orElse(null);
-    if (existingHashCard != null) {
-      log.debug("HashCard with ID {} already exists, skipping processing.", item.getCardId());
+    // Hash existence check in iris database
+    if (hashCardRepository.existsById(item.getCardId())) {
+      log.info("HashCard with ID {} already exists, skipping API call.", item.getCardId());
       return null;
     }
-    
+
     try {
       JsonNode response = irisApiService.fetchHashImage(item.getImageUrl());
       return hashImageMapper.toHashCard(item, response);

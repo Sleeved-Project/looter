@@ -21,7 +21,7 @@ import com.sleeved.looter.infra.dto.CardImageDTO;
 
 @Configuration
 public class HashingCardImageJobConfig {
-    @Value("${looter.batch.chunksize:1}")
+    @Value("${looter.batch.chunksize-hash:50}")
     private Integer chunkSize;
 
     @Autowired
@@ -30,11 +30,11 @@ public class HashingCardImageJobConfig {
     @Bean
     public Job hashingCardImageJob(JobRepository jobRepository, Step hashImagesStep) {
         return new JobBuilder("hashingCardImageJob", jobRepository)
-            .incrementer(new RunIdIncrementer())
-            .listener(hashingImageListener)
-            .start(hashImagesStep)
-            .build();
-    } 
+                .incrementer(new RunIdIncrementer())
+                .listener(hashingImageListener)
+                .start(hashImagesStep)
+                .build();
+    }
 
     @Bean
     public Step hashImagesStep(
@@ -42,14 +42,13 @@ public class HashingCardImageJobConfig {
             PlatformTransactionManager transactionManager,
             CardToCardImageDTOReader cardToCardImageDTOReader,
             CardImageDTOToHashCardProcessor cardImageDTOToHashCardProcessor,
-            HashImageWriter hashImageWriter
-            ) {
+            HashImageWriter hashImageWriter) {
         return new StepBuilder("hashImagesStep", jobRepository)
-            .<CardImageDTO, HashCard>chunk(chunkSize, transactionManager)
-            .listener(hashingImageListener)
-            .reader(cardToCardImageDTOReader)
-            .processor(cardImageDTOToHashCardProcessor)
-            .writer(hashImageWriter)
-            .build();
+                .<CardImageDTO, HashCard>chunk(chunkSize, transactionManager)
+                .listener(hashingImageListener)
+                .reader(cardToCardImageDTOReader)
+                .processor(cardImageDTOToHashCardProcessor)
+                .writer(hashImageWriter)
+                .build();
     }
 }

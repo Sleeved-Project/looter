@@ -37,6 +37,7 @@ logging:
 looter:
   batch:
     chunksize: ${LOOTER_BATCH_CHUNK_SIZE}
+    chunksize-hash: ${LOOTER_BATCH_CHUNK_SIZE_HASH}
   staging:
     datasource:
       jdbc-url: ${LOOTER_STAGING_JDBC_URL}

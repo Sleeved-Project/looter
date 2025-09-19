@@ -1,5 +1,7 @@
 package com.sleeved.looter.batch.writer;
 
+import java.util.stream.Collectors;
+
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
@@ -26,18 +28,29 @@ public class HashImageWriter implements ItemWriter<HashCard> {
   }
 
   @Override
-  public void write(Chunk<? extends HashCard> chunk) throws Exception {           
+  public void write(Chunk<? extends HashCard> chunk) {
+    try {
+      if (!chunk.isEmpty()) {
+        hashCardService.saveAll(chunk.getItems().stream().collect(Collectors.toList()));
+      }
+    } catch (Exception e) {
+      log.warn("Batch save failed, falling back to individual saves", e);
+      writeIndividually(chunk);
+    }
+  }
+
+  private void writeIndividually(Chunk<? extends HashCard> chunk) {
     for (HashCard hashCard : chunk) {
       try {
-        if (hashCard == null || hashCard.getHash() == null) {
-          continue;
-        }        
-        hashCardService.getOrCreate(hashCard);
+        if (hashCard != null && hashCard.getHash() != null) {
+          hashCardService.save(hashCard);
+        }
       } catch (Exception e) {
         String formatedItem = looterScrapingErrorHandler.formatErrorItem(
             Constantes.HASH_IMAGE_ITEM,
             hashCard.toString());
-        looterScrapingErrorHandler.handle(e, Constantes.HASH_IMAGE_WRITER_CONTEXT,
+        looterScrapingErrorHandler.handle(e,
+            Constantes.HASH_IMAGE_WRITER_CONTEXT,
             Constantes.WRITE_ACTION,
             formatedItem);
       }
