@@ -17,6 +17,7 @@ public class HashCardService {
     this.hashCardRepository = hashCardRepository;
   }
 
+  @Transactional
   public HashCard save(HashCard hashCard) {
     return hashCardRepository.save(hashCard);
   }
