@@ -52,14 +52,6 @@ public class IrisApiService {
         throw new RuntimeException("Invalid response format or missing 'hash' field");
       }
       return body;
-    } catch (HttpClientErrorException e) {
-      int status = e.getStatusCode().value();
-      if (status == 404)
-        log.warn("Image not found (404) for URL: {}", imageUrl);
-      else
-        log.error("HTTP error {} when accessing Iris API for image URL {}: {}",
-            status, imageUrl, e.getMessage());
-      return null;
     } catch (Exception e) {
       String formatedItem = looterScrapingErrorHandler.formatErrorItem(
           Constantes.HASH_IMAGE_ITEM, imageUrl);
