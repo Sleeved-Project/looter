@@ -31,13 +31,14 @@ public class CardToCardImageDTOReader implements ItemReader<CardImageDTO> {
 
         List<Card> cards = this.cardRepository.findByImageLargeIsNotNull();
         this.cardIterator = cards.iterator();
+        log.info("Initialized CardToCardImageDTOReader with {} cards to process.", cards.size());
     }
 
     /**
-     * Reads the next card image from the repository.
+     * Reads the next card image from the repository
      * 
      * @return CardImageDTO containing the card ID and image URL, or null if no more
-     *         cards are available.
+     *         cards are available
      */
     @Override
     public CardImageDTO read() {

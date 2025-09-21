@@ -27,10 +27,9 @@ public class IrisApiService {
   private String endpoint;
 
   public IrisApiService(RestTemplateBuilder builder,
-      LooterScrapingErrorHandler looterScrapingErrorHandler, 
+      LooterScrapingErrorHandler looterScrapingErrorHandler,
       IrisApiUrlBuilder irisApiUrlBuilder,
-    IrisApiRequestFactory requestFactory
-  ) {
+      IrisApiRequestFactory requestFactory) {
     this.restTemplate = builder.build();
     this.looterScrapingErrorHandler = looterScrapingErrorHandler;
     this.irisApiUrlBuilder = irisApiUrlBuilder;
@@ -39,29 +38,26 @@ public class IrisApiService {
 
   public JsonNode fetchHashImage(String imageUrl) {
     try {
-        String apiUrl = irisApiUrlBuilder.buildUrl(endpoint);
-        HttpEntity<String> requestEntity = requestFactory.createHashImageRequest(imageUrl);
-        
-        ResponseEntity<JsonNode> response = restTemplate.exchange(
-            apiUrl, 
-            HttpMethod.POST, 
-            requestEntity, 
-            JsonNode.class);
-        
-        JsonNode body = response.getBody();
-        if (body == null || !body.has("hash")) {
-          throw new RuntimeException("Invalid response format or missing 'hash' field");
-        }
-        return body;
-    } catch (HttpClientErrorException e) {
-      log.error("Bad request error while fetching hash image: {}", e.getMessage());
-      return null;
+      String apiUrl = irisApiUrlBuilder.buildUrl(endpoint);
+      HttpEntity<String> requestEntity = requestFactory.createHashImageRequest(imageUrl);
+
+      ResponseEntity<JsonNode> response = restTemplate.exchange(
+          apiUrl,
+          HttpMethod.POST,
+          requestEntity,
+          JsonNode.class);
+
+      JsonNode body = response.getBody();
+      if (body == null || !body.has("hash")) {
+        throw new RuntimeException("Invalid response format or missing 'hash' field");
+      }
+      return body;
     } catch (Exception e) {
       String formatedItem = looterScrapingErrorHandler.formatErrorItem(
           Constantes.HASH_IMAGE_ITEM, imageUrl);
       looterScrapingErrorHandler.handle(e,
-          Constantes.HASH_IMAGE_FETCH_CONTEXT, 
-          Constantes.FETCH_DATA_ACTION, 
+          Constantes.HASH_IMAGE_FETCH_CONTEXT,
+          Constantes.FETCH_DATA_ACTION,
           formatedItem);
       return null;
     }

@@ -24,7 +24,7 @@ tasks:
       - docker compose build
 
   build-job-runner:
-    desc: Build docker images
+    desc: Build only the job-runner image (for running batch jobs)
     cmds:
       - docker compose build --no-cache job-runner
 
